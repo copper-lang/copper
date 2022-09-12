@@ -14,11 +14,12 @@ else:
 	location = os.getcwd() + "/" + filepath
 
 	lineno = 1
+	variables = {}
 	for line in lines:
 		if line[:2] == "//" or line == "\n":
 			pass
 		else:
-			interpreter = Interpreter(line, lineno, location)
-			interpreter.interpret()
+			interpreter = Interpreter(line, variables, lineno, location)
+			variables = interpreter.interpret()
 	
 		lineno += 1
