@@ -1,0 +1,7 @@
+- [ ] Variables
+- [ ] Object Types
+- [ ] More Errors
+- [ ] Functions
+- [ ] If-Else Statements
+- [ ] While Loop
+- [ ] For Loop
