@@ -4,7 +4,7 @@ from utils.interpreter import Interpreter
 print("Enter filepath:")
 filepath = input(">>> ")
 
-file = open(filepath, 'r')
+file = open("tests/" + filepath, 'r')
 lines = file.readlines()
 location = os.getcwd() + "/" + filepath
 
