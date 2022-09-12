@@ -17,7 +17,7 @@ class Interpreter:
 				self.line.pop(0)
 				self.line.pop()
 
-				object = Object("".join(self.line))
+				object = Object("".join(self.line), self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
 				if type[0] == "string":
@@ -46,6 +46,16 @@ class Interpreter:
 
 				if type[0] == "string":
 					input(type[1].string)
+
+			else:
+				syntaxerror = Error(
+					"SyntaxError",
+					"Missing parentheses",
+					self.og_line,
+					self.lineno,
+					self.location
+				)
+				syntaxerror.print_stacktrace()
 
 		else:
 			command = ""

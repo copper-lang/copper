@@ -1,8 +1,2 @@
-// Error Checking
-out("test
-
-// Output
-out("print statement")
-
-// Standalone Input
-in("input ")
+// SyntaxError
+out(test")

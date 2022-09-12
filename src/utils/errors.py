@@ -10,7 +10,7 @@ class Error:
 
 	def print_stacktrace(self):
 		print(f"\n\033[0;31mError - at line {self.lineno} in <{self.location}>")
-		print(f"\t{self.line}")
+		print(f"\t{self.line}\n" if self.line[-1] != "\n" else f"\t{self.line}")
 		print(f"{self.error_name}: {self.reason}\033[0;0m\n")
 
 		sys.exit()
