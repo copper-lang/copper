@@ -1,2 +1,8 @@
+// Error Checking
+out("test
+
 // Output
-out("test")
+out("print statement")
+
+// Standalone Input
+in("input ")
