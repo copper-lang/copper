@@ -1,4 +1,11 @@
-- [ ] Variables
++ Variables
+  - [x] String
+  - [ ] Integer
+  - [ ] Float
+  - [ ] Boolean
+  - [ ] Math
+  - [ ] Boolean Expressions
+
 - [ ] Object Types
 - [ ] More Errors
 - [ ] Functions
