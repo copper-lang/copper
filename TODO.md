@@ -6,7 +6,6 @@
   - [ ] Math
   - [ ] Boolean Expressions
 
-- [ ] Object Types
 - [ ] More Errors
 - [ ] Functions
 - [ ] If-Else Statements
