@@ -1,4 +1,5 @@
 // Variables
 set(name, "Kryllyx")
 
+// Ouput with variables
 out("Hello, %name%.")
