@@ -13,7 +13,27 @@ class Interpreter:
 		self.og_line = line
 
 	def interpret(self) -> dict:
-		if "".join(self.line)[:3] == "out":
+		try:
+			command = ""
+			i = 0
+			while True:
+				if self.line[i] == "(":
+					break
+				else:
+					command += self.line[i]
+					i += 1
+
+		except IndexError:
+			syntaxerror = Error(
+				"SyntaxError",
+				"Missing parentheses",
+				self.og_line,
+				self.lineno,
+				self.location
+			)
+			syntaxerror.print_stacktrace()
+		
+		if command == "out":
 			for char in "out":
 				self.line.remove(char)
 
@@ -42,7 +62,7 @@ class Interpreter:
 				)
 				syntaxerror.print_stacktrace()
 
-		elif "".join(self.line)[:2] == "in":
+		elif command == "in":
 			for char in "in":
 				self.line.remove(char)
 
@@ -71,7 +91,7 @@ class Interpreter:
 				)
 				syntaxerror.print_stacktrace()
 
-		elif "".join(self.line[:3]) == "set":
+		elif command == "set":
 			for char in "set":
 				self.line.remove(char)
 
@@ -97,15 +117,6 @@ class Interpreter:
 			return self.vars
 
 		else:
-			command = ""
-			i = 0
-			while True:
-				if self.line[i] == "(":
-					break
-				else:
-					command += self.line[i]
-					i += 1
-			
 			commanderror = Error(
 				"CommandError",
 				f"Unknown command '{command}'",
