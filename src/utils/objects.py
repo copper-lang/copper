@@ -68,14 +68,12 @@ class Object:
 							ile.print_stacktrace()
 
 						else:
-							self.object = list(self.object)
-							if command[:2] == "in":
-								interpreter = utils.interpreter.Interpreter(
-									"".join(self.object),
-									self.vars,
-									self.lineno,
-									self.location
-								)
+							interpreter = utils.interpreter.Interpreter(
+								self.object,
+								self.vars,
+								self.lineno,
+								self.location
+							)
 
-								inpt = String(interpreter.interpret())
-								return "input", inpt
+							inpt = String(interpreter.interpret())
+							return "input", inpt

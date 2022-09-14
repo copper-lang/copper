@@ -1,5 +1,5 @@
 // User Input
-set(name, in("What's your name? "))
+set(name, n("What's your name? "))
 
 // Greet the user
 out("Hello, %name%.")
