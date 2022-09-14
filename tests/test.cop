@@ -1,14 +1,5 @@
-// String Variable
-set(name, "Kryllyx")
+// User Input
+set(name, in("What's your name? "))
 
-// Integer Variable
-set(integer, 256)
-
-// Float Variable
-set(pi, 3.14159)
-
-// Boolean Variable
-set(isStudent, True)
-
-// Multiple Variables
-out("%name% | %integer% | %pi% | %isStudent%")
+// Greet the user
+out("Hello, %name%.")

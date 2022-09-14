@@ -3,10 +3,12 @@ from utils.datatypes.integer import Integer
 from utils.datatypes.float import Float
 from utils.datatypes.boolean import Boolean
 from utils.errors import Error
+import utils.interpreter
 
 class Object:
-	def __init__(self, object, line, lineno, location):
+	def __init__(self, object, variables, line, lineno, location):
 		self.object = object
+		self.vars = variables
 		self.line = line
 		self.lineno = lineno
 		self.location = location
@@ -44,12 +46,36 @@ class Object:
 						return "boolean", boolean
 
 					else:
-						literal = "".join(self.object)
-						ile = Error(
-							"InvalidLiteralError",
-							f"Invalid literal '{literal}'",
-							self.line,
-							self.lineno,
-							self.location
-						)
-						ile.print_stacktrace()
+						try:
+							command = ""
+							i = 0
+							while True:
+								if self.object[i] == "(":
+									break
+								else:
+									command += self.object[i]
+									i += 1
+
+						except IndexError:
+							literal = "".join(self.object)
+							ile = Error(
+								"InvalidLiteralError",
+								f"Invalid literal '{literal}'",
+								self.line,
+								self.lineno,
+								self.location
+							)
+							ile.print_stacktrace()
+
+						else:
+							self.object = list(self.object)
+							if command[:2] == "in":
+								interpreter = utils.interpreter.Interpreter(
+									"".join(self.object),
+									self.vars,
+									self.lineno,
+									self.location
+								)
+
+								inpt = String(interpreter.interpret())
+								return "input", inpt

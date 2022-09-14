@@ -41,7 +41,7 @@ class Interpreter:
 				self.line.pop(0)
 				self.line.pop()
 
-				object = Object("".join(self.line), self.og_line, self.lineno, self.location)
+				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
 				if type[0] == "string":
@@ -70,16 +70,16 @@ class Interpreter:
 				self.line.pop(0)
 				self.line.pop()
 
-				object = Object("".join(self.line), self.og_line, self.lineno, self.location)
+				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
 				if type[0] == "string":
 					newString = self.getVars(type[1].literal)
 
 					if newString != None:
-						input(newString)
+						return input(newString)
 					else:
-						input(type[1].literal)
+						return input(type[1].literal)
 
 			else:
 				syntaxerror = Error(
@@ -107,7 +107,7 @@ class Interpreter:
 
 				literal = "".join(self.line).strip()
 
-				object = Object(literal, self.og_line, self.lineno, self.location)
+				object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
 				self.vars[var_name] = type[1]
