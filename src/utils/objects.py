@@ -1,7 +1,7 @@
-from utils.objects.string import String
-from utils.objects.integer import Integer
-from utils.objects.float import Float
-from utils.objects.boolean import Boolean
+from utils.datatypes.string import String
+from utils.datatypes.integer import Integer
+from utils.datatypes.float import Float
+from utils.datatypes.boolean import Boolean
 from utils.errors import Error
 
 class Object:

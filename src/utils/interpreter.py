@@ -1,4 +1,4 @@
-from utils.objects.objects import Object
+from utils.objects import Object
 from utils.errors import Error
 
 class Interpreter:
@@ -125,45 +125,42 @@ class Interpreter:
 			)
 			commanderror.print_stacktrace()
 
-	def getVars(self, string):
-		try:
-			og_string = string
-	
-			first = ""
-			i = 0
-			while True:
-				if string[i] == "%":
-					break
-				else:
-					first += string[i]
-					i += 1
-	
-			string = list(string)
-			for char in f"{first}%":
-				string.remove(char)
-			
-			var_name = ""
-			i = 0
-			while True:
-				if string[i] == "%":
-					break
-				elif string[i] == string[-1]:
-					varerror = Error(
-						"VarError",
-						"Missing '%' in variable call",
-						self.og_line,
-						self.lineno,
-						self.location
-					)
-					varerror.print_stacktrace()
-				else:
-					var_name += string[i]
-					i += 1
-	
-			for char in f"{var_name}%":
-				string.remove(char)
-	
-			return first + str(self.vars[var_name].literal) + "".join(string)
+	def getVars(self, string) -> str:
+		og_string = string
 
-		except IndexError:
+		if "%" in string:
+			while True:
+				if "%" not in string:
+					break
+				else:
+					first_half = ""
+					i = 0
+					while True:
+						if string[i] == "%":
+							break
+						else:
+							first_half += string[i]
+							i += 1
+
+					string = list(string)
+					for char in first_half + "%":
+						string.remove(char)
+
+					var_name = ""
+					i = 0
+					while True:
+						if string[i] == "%":
+							break
+						else:
+							var_name += string[i]
+							i += 1
+
+					for char in var_name + "%":
+						string.remove(char)
+
+					og_string = og_string.replace(f"%{var_name}%", str(self.vars[var_name].literal))
+
+			return og_string
+
+		else:
 			return None

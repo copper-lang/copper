@@ -10,5 +10,5 @@ set(pi, 3.14159)
 // Boolean Variable
 set(isStudent, True)
 
-// Invalid Literal
-set(invalid, 123abc)
+// Multiple Variables
+out("%name% | %integer% | %pi% | %isStudent%")
