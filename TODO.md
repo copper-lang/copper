@@ -3,7 +3,7 @@
   - [x] Integer
   - [x] Float
   - [x] Boolean
-  - [ ] User Input
+  - [x] User Input
   - [ ] Math
   - [ ] Boolean Expressions
 
