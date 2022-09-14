@@ -44,13 +44,11 @@ class Interpreter:
 				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
-				if type[0] == "string":
-					newString = self.getVars(type[1].literal)
-
-					if newString != None:
-						print(newString)
-					else:
-						print(type[1].literal)
+				newString = self.getVars(type[1].literal)
+				if newString != None:
+					print(newString)
+				else:
+					print(type[1].literal)
 
 			else:
 				syntaxerror = Error(
