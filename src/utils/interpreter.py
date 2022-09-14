@@ -44,11 +44,14 @@ class Interpreter:
 				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
-				newString = self.getVars(type[1].literal)
-				if newString != None:
-					print(newString)
-				else:
+				if type[0] == "variable":
 					print(type[1].literal)
+				else:
+					newString = self.getVars(type[1].literal)
+					if newString != None:
+						print(newString)
+					else:
+						print(type[1].literal)
 
 			else:
 				syntaxerror = Error(
@@ -110,9 +113,6 @@ class Interpreter:
 
 				self.vars[var_name] = type[1]
 
-			# print(self.vars)
-			return self.vars
-
 		else:
 			commanderror = Error(
 				"CommandError",
@@ -122,6 +122,9 @@ class Interpreter:
 				self.location
 			)
 			commanderror.print_stacktrace()
+
+		# print(self.vars)
+		return self.vars
 
 	def getVars(self, string) -> str:
 		og_string = string

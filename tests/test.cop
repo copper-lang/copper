@@ -11,4 +11,7 @@ set(product, 10 * 5)
 set(quotient, 4 / 2)
 
 // Exponent
-set(power, 7 ^ 7)
+set(power, 7 ** 7)
+
+// Output Results
+out("%sum% | %diff% | %product% | %quotient% | %power%")

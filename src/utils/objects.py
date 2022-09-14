@@ -32,6 +32,9 @@ class Object:
 			)
 			syntaxerror.print_stacktrace()
 
+		elif self.vars.get("".join(self.object)):
+			return "variable", self.vars.get("".join(self.object))
+
 		else:
 			try:
 				integer = Integer(int("".join(self.object)))
@@ -57,15 +60,30 @@ class Object:
 									i += 1
 
 						except IndexError:
-							literal = "".join(self.object)
-							ile = Error(
-								"InvalidLiteralError",
-								f"Invalid literal '{literal}'",
-								self.line,
-								self.lineno,
-								self.location
-							)
-							ile.print_stacktrace()
+							try:
+								self.object = "".join(self.object)
+								if "^" in self.object:
+									self.object.replace("^", "**")
+
+								result = eval(self.object)
+
+								if isinstance(result, int):
+									integer = Integer(result)
+									return "math", integer
+								else:
+									decimal = Float(result)
+									return "math", decimal
+								
+							except Exception:
+								literal = "".join(self.object)
+								ile = Error(
+									"InvalidLiteralError",
+									f"Invalid literal '{literal}'",
+									self.line,
+									self.lineno,
+									self.location
+								)
+								ile.print_stacktrace()
 
 						else:
 							interpreter = utils.interpreter.Interpreter(
