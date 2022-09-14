@@ -1,17 +1,8 @@
 // Addition
 set(sum, 2 + 2)
 
-// Subtraction
-set(diff, 6 - 3)
+// Increment 'sum' by 1
+set(sum, sum + 1)
 
-// Multiplication
-set(product, 10 * 5)
-
-// Division
-set(quotient, 4 / 2)
-
-// Exponent
-set(power, 7 ** 7)
-
-// Output Results
-out("%sum% | %diff% | %product% | %quotient% | %power%")
+// Output 'sum'
+out(sum)

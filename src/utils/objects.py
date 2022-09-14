@@ -65,7 +65,12 @@ class Object:
 								if "^" in self.object:
 									self.object.replace("^", "**")
 
-								result = eval(self.object)
+								keys = list(self.vars.keys())
+								variables = {}
+								for i in range(len(self.vars)):
+									variables[keys[i]] = self.vars.get(keys[i]).literal
+
+								result = eval(self.object, variables)
 
 								if isinstance(result, int):
 									integer = Integer(result)
@@ -74,7 +79,7 @@ class Object:
 									decimal = Float(result)
 									return "math", decimal
 								
-							except Exception:
+							except SyntaxError:
 								literal = "".join(self.object)
 								ile = Error(
 									"InvalidLiteralError",
