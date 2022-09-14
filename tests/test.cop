@@ -1,5 +1,14 @@
-// User Input
-set(name, in("What's your name? "))
+// Addition
+set(sum, 2 + 2)
 
-// Greet the user
-out("Hello, %name%.")
+// Subtraction
+set(diff, 6 - 3)
+
+// Multiplication
+set(product, 10 * 5)
+
+// Division
+set(quotient, 4 / 2)
+
+// Exponent
+set(power, 7 ^ 7)
