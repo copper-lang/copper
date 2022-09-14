@@ -45,12 +45,12 @@ class Interpreter:
 				type = object.checkType()
 
 				if type[0] == "string":
-					newString = self.getVars(type[1].string)
+					newString = self.getVars(type[1].literal)
 
 					if newString != None:
 						print(newString)
 					else:
-						print(type[1].string)
+						print(type[1].literal)
 
 			else:
 				syntaxerror = Error(
@@ -74,12 +74,12 @@ class Interpreter:
 				type = object.checkType()
 
 				if type[0] == "string":
-					newString = self.getVars(type[1].string)
+					newString = self.getVars(type[1].literal)
 
 					if newString != None:
 						input(newString)
 					else:
-						input(type[1].string)
+						input(type[1].literal)
 
 			else:
 				syntaxerror = Error(
@@ -110,8 +110,7 @@ class Interpreter:
 				object = Object(literal, self.og_line, self.lineno, self.location)
 				type = object.checkType()
 
-				if type[0] == "string":
-					self.vars[var_name] = type[1]
+				self.vars[var_name] = type[1]
 
 			# print(self.vars)
 			return self.vars
@@ -164,7 +163,7 @@ class Interpreter:
 			for char in f"{var_name}%":
 				string.remove(char)
 	
-			return first + self.vars[var_name].string + "".join(string)
+			return first + str(self.vars[var_name].literal) + "".join(string)
 
 		except IndexError:
 			return None
