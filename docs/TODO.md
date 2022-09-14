@@ -1,12 +1,12 @@
 + Variables
   - [x] String
-  - [ ] Integer
-  - [ ] Float
-  - [ ] Boolean
+  - [x] Integer
+  - [x] Float
+  - [x] Boolean
+  - [ ] User Input
   - [ ] Math
   - [ ] Boolean Expressions
 
-- [ ] More Errors
 - [ ] Functions
 - [ ] If-Else Statements
 - [ ] While Loop
