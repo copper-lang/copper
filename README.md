@@ -9,4 +9,4 @@ Procedure-oriented programming language written in Python that focuses on data m
 | `out()` | Output text | string |
 | `in()` | Take in user input | string |
 | `set()` | Create a variable | variable name, literal (any type) |
-| `toString()` | Convert variable to string type | variable |
+| `cast()` | Convert variable to given type | variable name, type (`string`, `integer`, `float`, `boolean`) |
