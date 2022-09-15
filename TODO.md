@@ -4,10 +4,12 @@
   - [x] Float
   - [x] Boolean
   - [x] User Input
-  - [ ] Math
+  - [x] Math
   - [ ] Boolean Expressions
 
 - [ ] Functions
+  - [ ] Parameters
 - [ ] If-Else Statements
 - [ ] While Loop
 - [ ] For Loop
+- [ ] Escape Characters
