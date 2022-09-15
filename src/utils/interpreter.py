@@ -1,4 +1,8 @@
 from utils.objects import Object
+from utils.datatypes.string import String
+from utils.datatypes.integer import Integer
+from utils.datatypes.float import Float
+from utils.datatypes.boolean import Boolean
 from utils.errors import Error
 
 class Interpreter:
@@ -112,6 +116,39 @@ class Interpreter:
 				type = object.checkType()
 
 				self.vars[var_name] = type[1]
+
+		elif command == "toString":
+			for char in "toString":
+				self.line.remove(char)
+
+			if self.line[0] == "(" and self.line[-1] == ")":
+				self.line.pop(0)
+				self.line.pop()
+
+				if self.vars.get("".join(self.line)):
+					string = String(str(self.vars["".join(self.line)].literal), self.og_line, self.lineno, self.location)
+					self.vars["".join(self.line)] = string
+
+				else:
+					var = "".join(self.line)
+					uve = Error(
+						"UnknownVariableError",
+						f"Unknown variable '{var}'",
+						self.og_line,
+						self.lineno,
+						self.location
+					)
+					uve.print_stacktrace()
+
+			else:
+				syntaxerror = Error(
+					"SyntaxError",
+					"Missing parentheses",
+					self.og_line,
+					self.lineno,
+					self.location
+				)
+				syntaxerror.print_stacktrace()
 
 		else:
 			commanderror = Error(

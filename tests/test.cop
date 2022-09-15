@@ -1,8 +1,3 @@
-// Addition
-set(sum, 2 + 2)
-
-// Increment 'sum' by 1
-set(sum, sum + 1)
-
-// Output 'sum'
-out(sum)
+// Convert integer to string
+set(x, 9)
+toString(x)

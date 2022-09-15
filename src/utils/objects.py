@@ -19,7 +19,7 @@ class Object:
 			self.object.pop(0)
 			self.object.pop()
 
-			string = String("".join(self.object))
+			string = String("".join(self.object), self.line, self.lineno, self.location)
 			return "string", string
 
 		elif (self.object[0] != "\"" and self.object[-1] == "\"") or (self.object[0] == "\"" and self.object[-1] != "\""):
@@ -37,15 +37,15 @@ class Object:
 
 		else:
 			try:
-				integer = Integer(int("".join(self.object)))
+				integer = Integer(int("".join(self.object)), self.line, self.lineno, self.location)
 				return "integer", integer
 			except ValueError:
 				try:
-					decimal = Float(float("".join(self.object)))
+					decimal = Float(float("".join(self.object)), self.line, self.lineno, self.location)
 					return "float", decimal
 				except ValueError:
 					if "".join(self.object) == "True" or "".join(self.object) == "False":
-						boolean = Boolean("".join(self.object) == "True")
+						boolean = Boolean("".join(self.object) == "True", self.line, self.lineno, self.location)
 						return "boolean", boolean
 
 					else:
@@ -73,10 +73,10 @@ class Object:
 								result = eval(self.object, variables)
 
 								if isinstance(result, int):
-									integer = Integer(result)
+									integer = Integer(result, self.line, self.lineno, self.location)
 									return "math", integer
 								else:
-									decimal = Float(result)
+									decimal = Float(result, self.line, self.lineno, self.location)
 									return "math", decimal
 								
 							except SyntaxError:
@@ -98,5 +98,5 @@ class Object:
 								self.location
 							)
 
-							inpt = String(interpreter.interpret())
+							inpt = String(interpreter.interpret(), self.line, self.lineno, self.location)
 							return "input", inpt
