@@ -1,3 +1,3 @@
-// Convert integer to string
-set(x, 9)
-cast(x, string)
+set(x, 9.67)
+round(x, default)
+out(x)

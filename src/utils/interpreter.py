@@ -202,7 +202,37 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
+
+		elif command == "round":
+			for char in "round":
+				self.line.remove(char)
 	
+			if self.line[0] == "(" and self.line[-1] == ")":
+				self.line.pop(0)
+				self.line.pop()
+
+				split_index = "".join(self.line).find(",")
+				var_name = "".join(self.line[:split_index])
+
+				if self.vars.get(var_name):
+					for char in f"{var_name},":
+						self.line.remove(char)
+	
+					round_type = "".join(self.line).strip()
+
+					try:
+						self.vars[var_name] = self.vars[var_name].round(round_type)
+
+					except ValueError:
+						roundingerror = Error(
+							"RoundingError",
+							f"Unable to round '{self.vars[var_name].literal}'",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						roundingerror.print_stacktrace()
+		
 		else:
 			commanderror = Error(
 				"CommandError",

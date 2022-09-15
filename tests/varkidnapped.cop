@@ -1,0 +1,109 @@
+// C++ project adapted for Copper
+
+out("Scenario One: Area and Perimeter")
+set(length, in("Length: "))
+cast(length, integer)
+
+set(width, in("Width: "))
+cast(width, integer)
+
+out("")
+
+set(area, length * width)
+out("Area: %area%")
+
+set(perimeter, (length * width) * 2)
+out("Perimeter: %perimeter%")
+
+out("======================================================")
+
+out("Scenario Two: Distance per Full Gas Tank")
+set(tankSize, in("Enter gas tank size in gallons: "))
+cast(tankSize, integer)
+
+set(mpg, in("Enter how many miles per gallon your car can get: "))
+cast(mpg, integer)
+
+out("")
+
+set(distance, tankSize * mpg)
+out("Possible distance without refueling: %distance% miles")
+
+out("======================================================")
+
+out("Scenario Three: Hourly Wage")
+set(pay, in("Enter your pay: "))
+cast(pay, float)
+
+set(hours, in("Enter number of hours worked: "))
+cast(hours, integer)
+
+out("")
+
+set(wage, pay / hours)
+out("Hourly Wage: $%wage%")
+
+out("======================================================")
+
+out("Scenario Four: Cost of Gas")
+set(cost, in("Enter the cost per gallon of gas: "))
+cast(cost, float)
+
+set(gallons, in("Enter number of gallons: "))
+cast(gallons, integer)
+
+out("")
+
+set(totalCost, cost * gallons)
+out("Total Cost: %totalCost%")
+round(totalCost)
+out("Rounded Cost: %totalCost%")
+
+out("======================================================")
+
+out("Scenario Five: Total Number of Seconds")
+set(hours, in("Enter number of hours: "))
+cast(hours, integer)
+
+set(minutes, in("Enter number of minutes: "))
+cast(minutes, integer)
+
+set(seconds, in("Enter number of seconds: "))
+cast(seconds, integer)
+
+out("")
+
+set(totalSeconds, (hours * 3600) + (minutes * 60) + seconds)
+out("Total Seconds: %totalSeconds%")
+
+out("======================================================")
+
+out("Scenario Six: Number of Crates of Action Figures")
+set(actionFigures, in("Enter number of action figures: "))
+cast(actionFigures, integer)
+
+out("")
+
+set(crates, actionFigures / 20)
+round(crates, floor)
+set(leftover, actionFigures % 20)
+out("Number of crates needed: %crates%")
+out("Leftover action figures: %leftover%")
+
+out("======================================================")
+
+out("Scenario Seven: Seconds to Hours, Minutes and Seconds")
+set(seconds, in("Enter number of seconds: "))
+cast(seconds, integer)
+
+set(hours, seconds / 3600)
+set(seconds, seconds - (hours * 3600))
+
+set(minutes, seconds / 60)
+set(seconds, seconds - (minutes * 60))
+
+out("")
+
+out("Hours: %hours%")
+out("Minutes: %minutes%")
+out("Seconds: %seconds%")
