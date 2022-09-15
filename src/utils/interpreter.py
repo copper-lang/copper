@@ -15,7 +15,7 @@ class Interpreter:
 		self.lineno = lineno
 		self.location = location
 		self.og_line = line
-
+	
 	def interpret(self) -> dict:
 		try:
 			command = ""
@@ -26,7 +26,7 @@ class Interpreter:
 				else:
 					command += self.line[i]
 					i += 1
-
+	
 		except IndexError:
 			syntaxerror = Error(
 				"SyntaxError",
@@ -40,14 +40,14 @@ class Interpreter:
 		if command == "out":
 			for char in "out":
 				self.line.remove(char)
-
+	
 			if self.line[0] == "(" and self.line[-1] == ")":
 				self.line.pop(0)
 				self.line.pop()
-
+	
 				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
-
+	
 				if type[0] == "variable":
 					print(type[1].literal)
 				else:
@@ -56,7 +56,7 @@ class Interpreter:
 						print(newString)
 					else:
 						print(type[1].literal)
-
+	
 			else:
 				syntaxerror = Error(
 					"SyntaxError",
@@ -66,26 +66,26 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
-
+	
 		elif command == "in":
 			for char in "in":
 				self.line.remove(char)
-
+	
 			if self.line[0] == "(" and self.line[-1] == ")":
 				self.line.pop(0)
 				self.line.pop()
-
+	
 				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
-
+	
 				if type[0] == "string":
 					newString = self.getVars(type[1].literal)
-
+	
 					if newString != None:
 						return input(newString)
 					else:
 						return input(type[1].literal)
-
+	
 			else:
 				syntaxerror = Error(
 					"SyntaxError",
@@ -95,51 +95,104 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
-
+	
 		elif command == "set":
 			for char in "set":
 				self.line.remove(char)
-
+	
 			if self.line[0] == "(" and self.line[-1] == ")":
 				self.line.pop(0)
 				self.line.pop()
-
+	
 				split_index = "".join(self.line).find(",")
 				var_name = "".join(self.line[:split_index])
-
+	
 				for char in f"{var_name},":
 					self.line.remove(char)
-
+	
 				literal = "".join(self.line).strip()
-
+	
 				object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
 				type = object.checkType()
-
+	
 				self.vars[var_name] = type[1]
-
-		elif command == "toString":
-			for char in "toString":
+	
+		elif command == "cast":
+			for char in "cast":
 				self.line.remove(char)
-
+	
 			if self.line[0] == "(" and self.line[-1] == ")":
 				self.line.pop(0)
 				self.line.pop()
-
-				if self.vars.get("".join(self.line)):
-					string = String(str(self.vars["".join(self.line)].literal), self.og_line, self.lineno, self.location)
-					self.vars["".join(self.line)] = string
-
+	
+				split_index = "".join(self.line).find(",")
+				var_name = "".join(self.line[:split_index])
+	
+				if self.vars.get(var_name):
+					for char in f"{var_name},":
+						self.line.remove(char)
+	
+					castTo = "".join(self.line).strip()
+	
+					if castTo == "string":
+						string = String(str(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+						self.vars[var_name] = string
+	
+					elif castTo == "integer":
+						try:
+							integer = Integer(int(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+							self.vars[var_name] = integer
+	
+						except ValueError:
+							conversionerror = Error(
+								"ConversionError",
+								f"Could not convert '{self.vars[var_name].literal}' to int",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							conversionerror.print_stacktrace()
+	
+					elif castTo == "float":
+						try:
+							decimal = Float(float(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+							self.vars[var_name] = decimal
+	
+						except ValueError:
+							conversionerror = Error(
+								"ConversionError",
+								f"Could not convert '{self.vars[var_name].literal}' to float",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							conversionerror.print_stacktrace()
+	
+					elif castTo == "boolean":
+						if self.vars[var_name].literal == "True" or self.vars[var_name].literal == "False":
+							boolean = Boolean(self.vars[var_name].literal == "True", self.og_line, self.lineno, self.location)
+							self.vars[var_name] = boolean
+	
+						else:
+							conversionerror = Error(
+								"ConversionError",
+								f"Could not convert '{self.vars[var_name].literal}' to boolean",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							conversionerror.print_stacktrace()
+	
 				else:
-					var = "".join(self.line)
 					uve = Error(
 						"UnknownVariableError",
-						f"Unknown variable '{var}'",
+						f"Unknown variable '{var_name}'",
 						self.og_line,
 						self.lineno,
 						self.location
 					)
 					uve.print_stacktrace()
-
+	
 			else:
 				syntaxerror = Error(
 					"SyntaxError",
@@ -149,7 +202,7 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
-
+	
 		else:
 			commanderror = Error(
 				"CommandError",
@@ -159,13 +212,13 @@ class Interpreter:
 				self.location
 			)
 			commanderror.print_stacktrace()
-
+	
 		# print(self.vars)
 		return self.vars
-
+	
 	def getVars(self, string) -> str:
 		og_string = string
-
+	
 		if "%" in string:
 			while True:
 				if "%" not in string:
@@ -179,11 +232,11 @@ class Interpreter:
 						else:
 							first_half += string[i]
 							i += 1
-
+	
 					string = list(string)
 					for char in first_half + "%":
 						string.remove(char)
-
+	
 					var_name = ""
 					i = 0
 					while True:
@@ -192,13 +245,13 @@ class Interpreter:
 						else:
 							var_name += string[i]
 							i += 1
-
+	
 					for char in var_name + "%":
 						string.remove(char)
-
+	
 					og_string = og_string.replace(f"%{var_name}%", str(self.vars[var_name].literal))
-
+	
 			return og_string
-
+	
 		else:
 			return None
