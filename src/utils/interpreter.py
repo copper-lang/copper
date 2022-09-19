@@ -6,58 +6,32 @@ from utils.datatypes.boolean import Boolean
 from utils.errors import Error
 
 class Interpreter:
-	def __init__(self, line, variables, lineno, location):
+	def __init__(self, line, variables, functions, isFunction, function, lineno, location):
 		self.line = list(line)
 		if self.line[-1] == "\n":
 			self.line.pop()
 		
 		self.vars = variables
+		self.functions = functions
+		self.isFunction = isFunction
+		self.function = function
 		self.lineno = lineno
 		self.location = location
 		self.og_line = line
 	
 	def interpret(self) -> dict:
-		try:
-			command = ""
-			i = 0
-			while True:
-				if self.line[i] == "(":
-					break
-				else:
-					command += self.line[i]
-					i += 1
-	
-		except IndexError:
-			syntaxerror = Error(
-				"SyntaxError",
-				"Missing parentheses",
-				self.og_line,
-				self.lineno,
-				self.location
-			)
-			syntaxerror.print_stacktrace()
-		
-		if command == "out":
-			for char in "out":
-				self.line.remove(char)
-	
-			if self.line[0] == "(" and self.line[-1] == ")":
-				self.line.pop(0)
-				self.line.pop()
-	
-				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
-				type = object.checkType()
-	
-				if type[0] == "variable":
-					print(type[1].literal)
-				else:
-					newString = self.getVars(type[1].literal)
-					if newString != None:
-						print(newString)
+		if self.isFunction == False:
+			try:
+				command = ""
+				i = 0
+				while True:
+					if self.line[i] == "(":
+						break
 					else:
-						print(type[1].literal)
-	
-			else:
+						command += self.line[i]
+						i += 1
+
+			except IndexError:
 				syntaxerror = Error(
 					"SyntaxError",
 					"Missing parentheses",
@@ -66,185 +40,291 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
-	
-		elif command == "in":
-			for char in "in":
-				self.line.remove(char)
-	
-			if self.line[0] == "(" and self.line[-1] == ")":
-				self.line.pop(0)
-				self.line.pop()
-	
-				object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
-				type = object.checkType()
-	
-				if type[0] == "string":
-					newString = self.getVars(type[1].literal)
-	
-					if newString != None:
-						return input(newString)
-					else:
-						return input(type[1].literal)
-	
+			
 			else:
-				syntaxerror = Error(
-					"SyntaxError",
-					"Missing parentheses",
-					self.og_line,
-					self.lineno,
-					self.location
-				)
-				syntaxerror.print_stacktrace()
-	
-		elif command == "set":
-			for char in "set":
-				self.line.remove(char)
-	
-			if self.line[0] == "(" and self.line[-1] == ")":
-				self.line.pop(0)
-				self.line.pop()
-	
-				split_index = "".join(self.line).find(",")
-				var_name = "".join(self.line[:split_index])
-	
-				for char in f"{var_name},":
-					self.line.remove(char)
-	
-				literal = "".join(self.line).strip()
-	
-				object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
-				type = object.checkType()
-	
-				self.vars[var_name] = type[1]
-	
-		elif command == "cast":
-			for char in "cast":
-				self.line.remove(char)
-	
-			if self.line[0] == "(" and self.line[-1] == ")":
-				self.line.pop(0)
-				self.line.pop()
-	
-				split_index = "".join(self.line).find(",")
-				var_name = "".join(self.line[:split_index])
-	
-				if self.vars.get(var_name):
-					for char in f"{var_name},":
+				if command == "out":
+					for char in "out":
 						self.line.remove(char)
-	
-					castTo = "".join(self.line).strip()
-	
-					if castTo == "string":
-						string = String(str(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
-						self.vars[var_name] = string
-	
-					elif castTo == "integer":
-						try:
-							integer = Integer(int(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
-							self.vars[var_name] = integer
-	
-						except ValueError:
-							conversionerror = Error(
-								"ConversionError",
-								f"Could not convert '{self.vars[var_name].literal}' to int",
-								self.og_line,
-								self.lineno,
-								self.location
-							)
-							conversionerror.print_stacktrace()
-	
-					elif castTo == "float":
-						try:
-							decimal = Float(float(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
-							self.vars[var_name] = decimal
-	
-						except ValueError:
-							conversionerror = Error(
-								"ConversionError",
-								f"Could not convert '{self.vars[var_name].literal}' to float",
-								self.og_line,
-								self.lineno,
-								self.location
-							)
-							conversionerror.print_stacktrace()
-	
-					elif castTo == "boolean":
-						if self.vars[var_name].literal == "True" or self.vars[var_name].literal == "False":
-							boolean = Boolean(self.vars[var_name].literal == "True", self.og_line, self.lineno, self.location)
-							self.vars[var_name] = boolean
-	
+			
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+			
+						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
+						type = object.checkType()
+			
+						if type[0] == "variable":
+							print(type[1].literal)
 						else:
-							conversionerror = Error(
-								"ConversionError",
-								f"Could not convert '{self.vars[var_name].literal}' to boolean",
-								self.og_line,
-								self.lineno,
-								self.location
-							)
-							conversionerror.print_stacktrace()
-	
-				else:
-					uve = Error(
-						"UnknownVariableError",
-						f"Unknown variable '{var_name}'",
-						self.og_line,
-						self.lineno,
-						self.location
-					)
-					uve.print_stacktrace()
-	
-			else:
-				syntaxerror = Error(
-					"SyntaxError",
-					"Missing parentheses",
-					self.og_line,
-					self.lineno,
-					self.location
-				)
-				syntaxerror.print_stacktrace()
-
-		elif command == "round":
-			for char in "round":
-				self.line.remove(char)
-	
-			if self.line[0] == "(" and self.line[-1] == ")":
-				self.line.pop(0)
-				self.line.pop()
-
-				split_index = "".join(self.line).find(",")
-				var_name = "".join(self.line[:split_index])
-
-				if self.vars.get(var_name):
-					for char in f"{var_name},":
-						self.line.remove(char)
-	
-					round_type = "".join(self.line).strip()
-
-					try:
-						self.vars[var_name] = self.vars[var_name].round(round_type)
-
-					except ValueError:
-						roundingerror = Error(
-							"RoundingError",
-							f"Unable to round '{self.vars[var_name].literal}'",
+							newString = self.getVars(type[1].literal)
+							if newString != None:
+								print(newString)
+							else:
+								print(type[1].literal)
+			
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
 							self.og_line,
 							self.lineno,
 							self.location
 						)
-						roundingerror.print_stacktrace()
+						syntaxerror.print_stacktrace()
+			
+				elif command == "in":
+					for char in "in":
+						self.line.remove(char)
+			
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+			
+						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
+						type = object.checkType()
+			
+						if type[0] == "string":
+							newString = self.getVars(type[1].literal)
+			
+							if newString != None:
+								return input(newString)
+							else:
+								return input(type[1].literal)
+			
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
+			
+				elif command == "set":
+					for char in "set":
+						self.line.remove(char)
+			
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+			
+						split_index = "".join(self.line).find(",")
+						var_name = "".join(self.line[:split_index])
+			
+						for char in f"{var_name},":
+							self.line.remove(char)
+			
+						literal = "".join(self.line).strip()
+			
+						object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
+						type = object.checkType()
+			
+						self.vars[var_name] = type[1]
+			
+				elif command == "cast":
+					for char in "cast":
+						self.line.remove(char)
+			
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+			
+						split_index = "".join(self.line).find(",")
+						var_name = "".join(self.line[:split_index])
+			
+						if self.vars.get(var_name):
+							for char in f"{var_name},":
+								self.line.remove(char)
+			
+							castTo = "".join(self.line).strip()
+			
+							if castTo == "string":
+								string = String(str(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+								self.vars[var_name] = string
+			
+							elif castTo == "integer":
+								try:
+									integer = Integer(int(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+									self.vars[var_name] = integer
+			
+								except ValueError:
+									conversionerror = Error(
+										"ConversionError",
+										f"Could not convert '{self.vars[var_name].literal}' to int",
+										self.og_line,
+										self.lineno,
+										self.location
+									)
+									conversionerror.print_stacktrace()
+			
+							elif castTo == "float":
+								try:
+									decimal = Float(float(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
+									self.vars[var_name] = decimal
+			
+								except ValueError:
+									conversionerror = Error(
+										"ConversionError",
+										f"Could not convert '{self.vars[var_name].literal}' to float",
+										self.og_line,
+										self.lineno,
+										self.location
+									)
+									conversionerror.print_stacktrace()
+			
+							elif castTo == "boolean":
+								if self.vars[var_name].literal == "True" or self.vars[var_name].literal == "False":
+									boolean = Boolean(self.vars[var_name].literal == "True", self.og_line, self.lineno, self.location)
+									self.vars[var_name] = boolean
+			
+								else:
+									conversionerror = Error(
+										"ConversionError",
+										f"Could not convert '{self.vars[var_name].literal}' to boolean",
+										self.og_line,
+										self.lineno,
+										self.location
+									)
+									conversionerror.print_stacktrace()
+			
+						else:
+							uve = Error(
+								"UnknownVariableError",
+								f"Unknown variable '{var_name}'",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							uve.print_stacktrace()
+			
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
 		
+				elif command == "round":
+					for char in "round":
+						self.line.remove(char)
+			
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+		
+						split_index = "".join(self.line).find(",")
+						var_name = "".join(self.line[:split_index])
+		
+						if self.vars.get(var_name):
+							for char in f"{var_name},":
+								self.line.remove(char)
+			
+							round_type = "".join(self.line).strip()
+		
+							try:
+								self.vars[var_name] = self.vars[var_name].round(round_type)
+		
+							except ValueError:
+								roundingerror = Error(
+									"RoundingError",
+									f"Unable to round '{self.vars[var_name].literal}'",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								roundingerror.print_stacktrace()
+		
+				elif command == "proc":
+					for char in "proc":
+						self.line.remove(char)
+		
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+		
+						try:
+							proc = ""
+							i = 0
+							while True:
+								if self.line[i] == "(":
+									break
+								else:
+									proc += self.line[i]
+									i += 1
+					
+						except IndexError:
+							syntaxerror = Error(
+								"SyntaxError",
+								"Missing parentheses",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							syntaxerror.print_stacktrace()
+		
+						for char in proc:
+							self.line.remove(char)
+		
+						if self.line[0] == "(" and self.line[-1] == ")":
+							self.line.pop(0)
+							self.line.pop()
+		
+							params = "".join(self.line).split(",")
+							args = {}
+							for param in params:
+								args[param] = ""
+		
+							self.functions[proc] = [args]
+							self.isFunction = True
+							self.function = proc
+		
+						else:
+							syntaxerror = Error(
+								"SyntaxError",
+								"Missing parentheses",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							syntaxerror.print_stacktrace()
+		
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
+				
+				else:
+					commanderror = Error(
+						"CommandError",
+						f"Unknown command '{command}'",
+						self.og_line,
+						self.lineno,
+						self.location
+					)
+					commanderror.print_stacktrace()
+
 		else:
-			commanderror = Error(
-				"CommandError",
-				f"Unknown command '{command}'",
-				self.og_line,
-				self.lineno,
-				self.location
-			)
-			commanderror.print_stacktrace()
-	
-		# print(self.vars)
-		return self.vars
+			if self.og_line == "endproc":
+				self.isFunction = False
+			else:
+				try:
+					self.functions[self.function][1].append(self.og_line)
+				except IndexError:
+					self.functions[self.function].append([])
+					self.functions[self.function][1].append(self.og_line)
+
+		# print(self.og_line == "endproc")
+		# print(self.og_line)
+		return self.vars, self.functions, self.isFunction, self.function
 	
 	def getVars(self, string) -> str:
 		og_string = string

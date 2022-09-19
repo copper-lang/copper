@@ -15,11 +15,14 @@ else:
 
 	lineno = 1
 	variables = {}
+	functions = {}
+	isFunction = False
+	function = ""
 	for line in lines:
 		if line[:2] == "//" or line == "\n":
 			pass
 		else:
-			interpreter = Interpreter(line, variables, lineno, location)
-			variables = interpreter.interpret()
+			interpreter = Interpreter(line.strip(), variables, functions, isFunction, function, lineno, location)
+			variables, functions, isFunction, function = interpreter.interpret()
 	
 		lineno += 1
