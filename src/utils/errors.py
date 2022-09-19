@@ -4,7 +4,7 @@ class Error:
 	def __init__(self, error_name, reason, line, lineno, location):
 		self.error_name = error_name
 		self.reason = reason
-		self.line = line
+		self.line = line.strip()
 		self.lineno = lineno
 		self.location = location
 
