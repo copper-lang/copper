@@ -3,4 +3,4 @@ proc(greet(name, age))
 endproc
 
 // Not my real age so no freaking out.
-greet("Kryllyx" 26)
+greet("Kryllyx", 26)
