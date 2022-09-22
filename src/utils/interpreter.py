@@ -187,6 +187,16 @@ class Interpreter:
 										self.location
 									)
 									conversionerror.print_stacktrace()
+							
+							else:
+								cte = Error(
+									"ConversionTypeError",
+									f"Cannot convert to type {castTo}",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								cte.print_stacktrace()
 			
 						else:
 							uve = Error(
