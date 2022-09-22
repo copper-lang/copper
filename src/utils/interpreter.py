@@ -50,7 +50,7 @@ class Interpreter:
 						self.line.pop(0)
 						self.line.pop()
 
-						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
+						object = Object("".join(self.line), self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
 						type = object.checkType()
 
 						if type[0] == "variable":
@@ -80,7 +80,7 @@ class Interpreter:
 						self.line.pop(0)
 						self.line.pop()
 
-						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
+						object = Object("".join(self.line), self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
 						type = object.checkType()
 
 						if type[0] == "string":
@@ -117,10 +117,20 @@ class Interpreter:
 
 						literal = "".join(self.line).strip()
 
-						object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
+						object = Object(literal, self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
 						type = object.checkType()
 
 						self.vars[var_name] = type[1]
+
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
 
 				elif command == "cast":
 					for char in "cast":
@@ -328,7 +338,7 @@ class Interpreter:
 
 						try:
 							for i in range(len(params)):
-								object = Object(params[i], self.vars, self.og_line, self.lineno, self.location)
+								object = Object(params[i], self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
 								type = object.checkType()
 								dontCheck = ["integer", "float", "boolean", "math", "input", "variable"]
 
@@ -357,12 +367,17 @@ class Interpreter:
 							)
 							syntaxerror.print_stacktrace()
 
-						for i in range(len(params)):
-							object = Object(params[i], self.vars, self.og_line, self.lineno, self.location)
-							type = object.checkType()
+						try:
+							for i in range(len(params)):
+								object = Object(params[i], self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
+								type = object.checkType()
+	
+								args = list(self.functions[command][0].keys())
+								self.functions[command][0][args[i]] = type[1]
+								self.functions[command][0] = self.functions[command][0] + self.vars
 
-							args = list(self.functions[command][0].keys())
-							self.functions[command][0][args[i]] = type[1]
+						except IndexError:
+							self.functions[command][0] = self.vars
 
 						for arg in self.functions[command][1]:
 							interpreter = Interpreter(
@@ -406,8 +421,6 @@ class Interpreter:
 					self.functions[self.function].append([])
 					self.functions[self.function][1].append(self.og_line)
 
-		# print(self.og_line == "endproc")
-		# print(self.og_line)
 		return self.vars, self.functions, self.isFunction, self.function
 
 	def getVars(self, string) -> str:

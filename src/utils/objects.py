@@ -6,9 +6,12 @@ from utils.errors import Error
 import utils.interpreter
 
 class Object:
-	def __init__(self, object, variables, line, lineno, location):
+	def __init__(self, object, variables, functions, isFunction, function, line, lineno, location):
 		self.object = object
 		self.vars = variables
+		self.functions = functions
+		self.isFunction = isFunction
+		self.function = function
 		self.line = line
 		self.lineno = lineno
 		self.location = location
@@ -94,6 +97,9 @@ class Object:
 								interpreter = utils.interpreter.Interpreter(
 									self.object,
 									self.vars,
+									self.functions,
+									self.isFunction,
+									self.function,
 									self.lineno,
 									self.location
 								)

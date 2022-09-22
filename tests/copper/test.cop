@@ -1,6 +1,6 @@
-proc(greet(name, age))
-	out("Hello, %name%. You are %age% years old.")
+proc(greet())
+	set(name, in("Hello! What's your name? "))
 endproc
 
-// Not my real age so no freaking out.
-greet("Kryllyx", 26)
+greet()
+out("Nice to meet you, %name%.")
