@@ -1,3 +1,6 @@
-proc(test(param))
-	out("Hello, %param%")
+proc(greet(name, age))
+	out("Hello, %name%. You are %age% years old.")
 endproc
+
+// Not my real age so no freaking out.
+greet("Kryllyx" 26)

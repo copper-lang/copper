@@ -283,6 +283,9 @@ class Interpreter:
 							self.line.pop()
 
 							params = "".join(self.line).split(",")
+							for i in range(len(params)):
+								params[i] = params[i].strip()
+
 							args = {}
 							for param in params:
 								args[param] = ""
@@ -300,6 +303,78 @@ class Interpreter:
 								self.location
 							)
 							syntaxerror.print_stacktrace()
+
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
+
+				elif command in self.functions.keys():
+					for char in command:
+						self.line.remove(char)
+
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+
+						params = "".join(self.line).split(",")
+						for i in range(len(params)):
+							params[i] = params[i].strip()
+
+						try:
+							for i in range(len(params)):
+								object = Object(params[i], self.vars, self.og_line, self.lineno, self.location)
+								type = object.checkType()
+								dontCheck = ["integer", "float", "boolean", "math", "input", "variable"]
+
+								if type[0] not in dontCheck:
+									if params[i][0] == "\"" and params[i][-1] != "\"":
+										if params[i+1][0] != "\"" and params[i+1][-1] == "\"":
+											params[i] = ''.join([params[i] for i in [i, i+1]])
+											params.pop(i+1)
+										else:
+											raise SyntaxError
+									else:
+										if params[i][0] == "\"" and params[i][-1] == "\"":
+											pass
+										else:
+											raise SyntaxError
+
+						except IndexError:
+							pass
+						except SyntaxError:
+							syntaxerror = Error(
+								"SyntaxError",
+								"Missing quotation marks in argument",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							syntaxerror.print_stacktrace()
+
+						for i in range(len(params)):
+							object = Object(params[i], self.vars, self.og_line, self.lineno, self.location)
+							type = object.checkType()
+
+							args = list(self.functions[command][0].keys())
+							self.functions[command][0][args[i]] = type[1]
+
+						for arg in self.functions[command][1]:
+							interpreter = Interpreter(
+								arg,
+								self.functions[command][0],
+								self.functions,
+								self.isFunction,
+								self.function,
+								self.lineno,
+								self.location
+							)
+							interpreter.interpret()
 
 					else:
 						syntaxerror = Error(
