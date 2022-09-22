@@ -7,8 +7,8 @@
   - [x] Math
   - [ ] Boolean Expressions
 
-- [ ] Functions
-  - [ ] Parameters
+- [x] Functions
+  - [x] Parameters
 - [ ] If-Else Statements
 - [ ] While Loop
 - [ ] For Loop
