@@ -16,11 +16,11 @@ class Integer:
 			return Integer(math.floor(self.literal), self.line, self.lineno, self.location)
 		
 		else:
-			rye = Error(
+			rte = Error(
 				"RoundTypeError",
 				f"Unknown round type '{round_type}'",
 				self.line,
 				self.lineno,
 				self.location
 			)
-			rye.print_stacktrace()
+			rte.print_stacktrace()

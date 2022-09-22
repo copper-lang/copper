@@ -24,5 +24,5 @@ else:
 		else:
 			interpreter = Interpreter(line.strip(), variables, functions, isFunction, function, lineno, location)
 			variables, functions, isFunction, function = interpreter.interpret()
-	
+
 		lineno += 1

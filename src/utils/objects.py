@@ -67,7 +67,7 @@ class Object:
 						if "".join(self.object) == "True" or "".join(self.object) == "False":
 							boolean = Boolean("".join(self.object) == "True", self.line, self.lineno, self.location)
 							return "boolean", boolean
-	
+
 						else:
 							try:
 								command = ""
@@ -78,7 +78,7 @@ class Object:
 									else:
 										command += self.object[i]
 										i += 1
-	
+
 							except IndexError:
 								literal = "".join(self.object)
 								ile = Error(
@@ -89,7 +89,7 @@ class Object:
 									self.location
 								)
 								ile.print_stacktrace()
-	
+
 							else:
 								interpreter = utils.interpreter.Interpreter(
 									self.object,
@@ -97,7 +97,7 @@ class Object:
 									self.lineno,
 									self.location
 								)
-	
+
 								inpt = String(interpreter.interpret(), self.line, self.lineno, self.location)
 								return "input", inpt
 

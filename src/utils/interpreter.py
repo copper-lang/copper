@@ -10,7 +10,7 @@ class Interpreter:
 		self.line = list(line)
 		if self.line[-1] == "\n":
 			self.line.pop()
-		
+
 		self.vars = variables
 		self.functions = functions
 		self.isFunction = isFunction
@@ -18,7 +18,7 @@ class Interpreter:
 		self.lineno = lineno
 		self.location = location
 		self.og_line = line
-	
+
 	def interpret(self) -> dict:
 		if self.isFunction == False:
 			try:
@@ -40,19 +40,19 @@ class Interpreter:
 					self.location
 				)
 				syntaxerror.print_stacktrace()
-			
+
 			else:
 				if command == "out":
 					for char in "out":
 						self.line.remove(char)
-			
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-			
+
 						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 						type = object.checkType()
-			
+
 						if type[0] == "variable":
 							print(type[1].literal)
 						else:
@@ -61,7 +61,7 @@ class Interpreter:
 								print(newString)
 							else:
 								print(type[1].literal)
-			
+
 					else:
 						syntaxerror = Error(
 							"SyntaxError",
@@ -71,26 +71,26 @@ class Interpreter:
 							self.location
 						)
 						syntaxerror.print_stacktrace()
-			
+
 				elif command == "in":
 					for char in "in":
 						self.line.remove(char)
-			
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-			
+
 						object = Object("".join(self.line), self.vars, self.og_line, self.lineno, self.location)
 						type = object.checkType()
-			
+
 						if type[0] == "string":
 							newString = self.getVars(type[1].literal)
-			
+
 							if newString != None:
 								return input(newString)
 							else:
 								return input(type[1].literal)
-			
+
 					else:
 						syntaxerror = Error(
 							"SyntaxError",
@@ -100,54 +100,54 @@ class Interpreter:
 							self.location
 						)
 						syntaxerror.print_stacktrace()
-			
+
 				elif command == "set":
 					for char in "set":
 						self.line.remove(char)
-			
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-			
+
 						split_index = "".join(self.line).find(",")
 						var_name = "".join(self.line[:split_index])
-			
+
 						for char in f"{var_name},":
 							self.line.remove(char)
-			
+
 						literal = "".join(self.line).strip()
-			
+
 						object = Object(literal, self.vars, self.og_line, self.lineno, self.location)
 						type = object.checkType()
-			
+
 						self.vars[var_name] = type[1]
-			
+
 				elif command == "cast":
 					for char in "cast":
 						self.line.remove(char)
-			
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-			
+
 						split_index = "".join(self.line).find(",")
 						var_name = "".join(self.line[:split_index])
-			
+
 						if self.vars.get(var_name):
 							for char in f"{var_name},":
 								self.line.remove(char)
-			
+
 							castTo = "".join(self.line).strip()
-			
+
 							if castTo == "string":
 								string = String(str(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
 								self.vars[var_name] = string
-			
+
 							elif castTo == "integer":
 								try:
 									integer = Integer(int(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
 									self.vars[var_name] = integer
-			
+
 								except ValueError:
 									conversionerror = Error(
 										"ConversionError",
@@ -157,12 +157,12 @@ class Interpreter:
 										self.location
 									)
 									conversionerror.print_stacktrace()
-			
+
 							elif castTo == "float":
 								try:
 									decimal = Float(float(self.vars[var_name].literal), self.og_line, self.lineno, self.location)
 									self.vars[var_name] = decimal
-			
+
 								except ValueError:
 									conversionerror = Error(
 										"ConversionError",
@@ -172,12 +172,12 @@ class Interpreter:
 										self.location
 									)
 									conversionerror.print_stacktrace()
-			
+
 							elif castTo == "boolean":
 								if self.vars[var_name].literal == "True" or self.vars[var_name].literal == "False":
 									boolean = Boolean(self.vars[var_name].literal == "True", self.og_line, self.lineno, self.location)
 									self.vars[var_name] = boolean
-			
+
 								else:
 									conversionerror = Error(
 										"ConversionError",
@@ -187,7 +187,7 @@ class Interpreter:
 										self.location
 									)
 									conversionerror.print_stacktrace()
-							
+
 							else:
 								cte = Error(
 									"ConversionTypeError",
@@ -197,7 +197,7 @@ class Interpreter:
 									self.location
 								)
 								cte.print_stacktrace()
-			
+
 						else:
 							uve = Error(
 								"UnknownVariableError",
@@ -207,7 +207,7 @@ class Interpreter:
 								self.location
 							)
 							uve.print_stacktrace()
-			
+
 					else:
 						syntaxerror = Error(
 							"SyntaxError",
@@ -217,27 +217,26 @@ class Interpreter:
 							self.location
 						)
 						syntaxerror.print_stacktrace()
-		
+
 				elif command == "round":
 					for char in "round":
 						self.line.remove(char)
-			
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-		
+
 						split_index = "".join(self.line).find(",")
 						var_name = "".join(self.line[:split_index])
-		
+
 						if self.vars.get(var_name):
 							for char in f"{var_name},":
 								self.line.remove(char)
-			
+
 							round_type = "".join(self.line).strip()
-		
+
 							try:
 								self.vars[var_name] = self.vars[var_name].round(round_type)
-		
 							except ValueError:
 								roundingerror = Error(
 									"RoundingError",
@@ -247,15 +246,15 @@ class Interpreter:
 									self.location
 								)
 								roundingerror.print_stacktrace()
-		
+
 				elif command == "proc":
 					for char in "proc":
 						self.line.remove(char)
-		
+
 					if self.line[0] == "(" and self.line[-1] == ")":
 						self.line.pop(0)
 						self.line.pop()
-		
+
 						try:
 							proc = ""
 							i = 0
@@ -265,7 +264,7 @@ class Interpreter:
 								else:
 									proc += self.line[i]
 									i += 1
-					
+
 						except IndexError:
 							syntaxerror = Error(
 								"SyntaxError",
@@ -275,23 +274,23 @@ class Interpreter:
 								self.location
 							)
 							syntaxerror.print_stacktrace()
-		
+
 						for char in proc:
 							self.line.remove(char)
-		
+
 						if self.line[0] == "(" and self.line[-1] == ")":
 							self.line.pop(0)
 							self.line.pop()
-		
+
 							params = "".join(self.line).split(",")
 							args = {}
 							for param in params:
 								args[param] = ""
-		
+
 							self.functions[proc] = [args]
 							self.isFunction = True
 							self.function = proc
-		
+
 						else:
 							syntaxerror = Error(
 								"SyntaxError",
@@ -301,7 +300,7 @@ class Interpreter:
 								self.location
 							)
 							syntaxerror.print_stacktrace()
-		
+
 					else:
 						syntaxerror = Error(
 							"SyntaxError",
@@ -311,7 +310,7 @@ class Interpreter:
 							self.location
 						)
 						syntaxerror.print_stacktrace()
-				
+
 				else:
 					commanderror = Error(
 						"CommandError",
@@ -335,10 +334,10 @@ class Interpreter:
 		# print(self.og_line == "endproc")
 		# print(self.og_line)
 		return self.vars, self.functions, self.isFunction, self.function
-	
+
 	def getVars(self, string) -> str:
 		og_string = string
-	
+
 		if "%" in string:
 			while True:
 				if "%" not in string:
@@ -352,11 +351,11 @@ class Interpreter:
 						else:
 							first_half += string[i]
 							i += 1
-	
+
 					string = list(string)
 					for char in first_half + "%":
 						string.remove(char)
-	
+
 					var_name = ""
 					i = 0
 					while True:
@@ -365,13 +364,13 @@ class Interpreter:
 						else:
 							var_name += string[i]
 							i += 1
-	
+
 					for char in var_name + "%":
 						string.remove(char)
-	
+
 					og_string = og_string.replace(f"%{var_name}%", str(self.vars[var_name].literal))
-	
+
 			return og_string
-	
+
 		else:
 			return None
