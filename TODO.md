@@ -9,6 +9,7 @@
 
 - [x] Functions
   - [x] Parameters
+  - [ ] Return
 - [ ] If-Else Statements
 - [ ] While Loop
 - [ ] For Loop
