@@ -120,7 +120,10 @@ class Interpreter:
 						object = Object(literal, self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
 						type = object.checkType()
 
-						self.vars[var_name] = type[1]
+						if self.isFunction:
+							self.functions[command][0][var_name] = type[1]
+						else:
+							self.vars[var_name] = type[1]
 
 					else:
 						syntaxerror = Error(
@@ -374,7 +377,6 @@ class Interpreter:
 	
 								args = list(self.functions[command][0].keys())
 								self.functions[command][0][args[i]] = type[1]
-								self.functions[command][0] = self.functions[command][0] + self.vars
 
 						except IndexError:
 							self.functions[command][0] = self.vars
@@ -456,7 +458,17 @@ class Interpreter:
 					for char in var_name + "%":
 						string.remove(char)
 
-					og_string = og_string.replace(f"%{var_name}%", str(self.vars[var_name].literal))
+					try:
+						og_string = og_string.replace(f"%{var_name}%", str(self.vars[var_name].literal))
+					except KeyError:
+						varerror = Error(
+							"VarError",
+							f"Unknown variable '{var_name}'",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						varerror.print_stacktrace()
 
 			return og_string
 

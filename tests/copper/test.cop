@@ -1,6 +1,15 @@
-proc(greet())
-	set(name, in("Hello! What's your name? "))
+proc(add(x, y))
+	set(sum, x + y)
 endproc
 
-greet()
-out("Nice to meet you, %name%.")
+proc(subtract(x, y))
+	set(diff, x - y)
+endproc
+
+out("")
+add(2, 3)
+out("Sum: %sum%")
+
+out("")
+subtract(8, 1)
+out("Difference: %diff%")
