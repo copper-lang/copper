@@ -1,15 +1,9 @@
 proc(add(x, y))
 	set(sum, x + y)
+	out(sum)
 endproc
 
 proc(subtract(x, y))
 	set(diff, x - y)
+	out(diff)
 endproc
-
-out("")
-add(2, 3)
-out("Sum: %sum%")
-
-out("")
-subtract(8, 1)
-out("Difference: %diff%")
