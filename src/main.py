@@ -22,7 +22,16 @@ else:
 		if line[:2] == "//" or line == "\n":
 			pass
 		else:
-			interpreter = Interpreter(line.strip(), variables, functions, isFunction, function, lineno, location)
+			interpreter = Interpreter(
+				line.strip(),
+				variables,
+				functions,
+				isFunction,
+				function,
+				lineno,
+				location,
+				lines
+			)
 			variables, functions, isFunction, function = interpreter.interpret()
 
 		lineno += 1

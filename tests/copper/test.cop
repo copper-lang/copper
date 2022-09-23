@@ -3,7 +3,4 @@ proc(add(x, y))
 	out(sum)
 endproc
 
-proc(subtract(x, y))
-	set(diff, x - y)
-	out(diff)
-endproc
+add(2, 2)

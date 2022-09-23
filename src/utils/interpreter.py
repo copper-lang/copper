@@ -1,3 +1,4 @@
+import sys
 from utils.objects import Object
 from utils.datatypes.string import String
 from utils.datatypes.integer import Integer
@@ -6,7 +7,7 @@ from utils.datatypes.boolean import Boolean
 from utils.errors import Error
 
 class Interpreter:
-	def __init__(self, line, variables, functions, isFunction, function, lineno, location):
+	def __init__(self, line, variables, functions, isFunction, function, lineno, location, lines=[]):
 		self.line = list(line)
 		if self.line[-1] == "\n":
 			self.line.pop()
@@ -17,6 +18,7 @@ class Interpreter:
 		self.function = function
 		self.lineno = lineno
 		self.location = location
+		self.lines = lines
 		self.og_line = line
 
 	def interpret(self) -> dict:
@@ -414,6 +416,13 @@ class Interpreter:
 					commanderror.print_stacktrace()
 
 		else:
+			if self.lineno == len(self.lines):
+				if self.isFunction == True and self.og_line == "endproc":
+					pass
+				elif self.isFunction == True and self.og_line != "endproc":
+					print(f"\n\033[0;31mUnclosedProcedureError: The procedure '{self.function}' was never closed\033[0;0m\n")
+					sys.exit()
+			
 			if self.og_line == "endproc":
 				self.isFunction = False
 			else:
