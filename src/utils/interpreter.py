@@ -405,6 +405,60 @@ class Interpreter:
 						)
 						syntaxerror.print_stacktrace()
 
+				elif command == "if":
+					for char in "if":
+						self.line.remove(char)
+
+					if self.line[0] == "(" and self.line[-1] == ")":
+						self.line.pop(0)
+						self.line.pop()
+
+						split_index = "".join(self.line).find(",")
+						check = self.line[:split_index]
+
+						keys = list(self.vars.keys())
+						variables = {}
+						for i in range(len(self.vars)):
+							variables[keys[i]] = self.vars.get(keys[i]).literal
+
+						try:
+							bool_exp = eval("".join(check), variables)
+						except SyntaxError:
+							paramerror = Error(
+								"ParamError",
+								"Missing comma between expression and procedure",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							paramerror.print_stacktrace()
+
+						proc = self.line[split_index:]
+						proc.pop(0)
+						proc = "".join(proc).strip()
+
+						if bool_exp:
+							interpreter = Interpreter(
+								proc,
+								self.vars,
+								self.functions,
+								self.isFunction,
+								self.function,
+								self.lineno,
+								self.location
+							)
+							interpreter.interpret()
+
+					else:
+						syntaxerror = Error(
+							"SyntaxError",
+							"Missing parentheses",
+							self.og_line,
+							self.lineno,
+							self.location
+						)
+						syntaxerror.print_stacktrace()
+				
 				else:
 					commanderror = Error(
 						"CommandError",
