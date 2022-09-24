@@ -1,12 +1,3 @@
-+ Variables
-  - [x] String
-  - [x] Integer
-  - [x] Float
-  - [x] Boolean
-  - [x] User Input
-  - [x] Math
-  - [x] Boolean Expressions
-
 + Error Fixes
   - [ ] Missing commas in functions
   - [ ] Providing full lines for inner interpreters
