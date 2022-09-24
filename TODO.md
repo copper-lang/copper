@@ -7,7 +7,7 @@
   - [x] Math
   - [x] Boolean Expressions
 
-- [ ] Error Fixes
++ Error Fixes
   - [ ] Missing commas in functions
   - [ ] Providing full lines for inner interpreters
 
