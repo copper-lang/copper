@@ -1,5 +1,5 @@
 + Error Fixes
-  - [ ] Missing commas in functions
+  - [x] Missing commas in functions
 
 - [x] Functions
   - [x] Parameters
