@@ -114,8 +114,19 @@ class Interpreter:
 						split_index = "".join(self.line).find(",")
 						var_name = "".join(self.line[:split_index])
 
-						for char in f"{var_name},":
-							self.line.remove(char)
+						try:
+							for char in f"{var_name},":
+								self.line.remove(char)
+						
+						except ValueError:
+							syntaxerror = Error(
+								"SyntaxError",
+								"Missing comma between variable name and literal",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							syntaxerror.print_stacktrace()
 
 						literal = "".join(self.line).strip()
 
@@ -149,8 +160,19 @@ class Interpreter:
 						var_name = "".join(self.line[:split_index])
 
 						if self.vars.get(var_name):
-							for char in f"{var_name},":
-								self.line.remove(char)
+							try:
+								for char in f"{var_name},":
+									self.line.remove(char)
+							
+							except ValueError:
+								syntaxerror = Error(
+									"SyntaxError",
+									"Missing comma between variable name and cast type",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								syntaxerror.print_stacktrace()
 
 							castTo = "".join(self.line).strip()
 
@@ -245,8 +267,19 @@ class Interpreter:
 						var_name = "".join(self.line[:split_index])
 
 						if self.vars.get(var_name):
-							for char in f"{var_name},":
-								self.line.remove(char)
+							try:
+								for char in f"{var_name},":
+									self.line.remove(char)
+							
+							except ValueError:
+								syntaxerror = Error(
+									"SyntaxError",
+									"Missing comma between variable name and round type",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								syntaxerror.print_stacktrace()
 
 							round_type = "".join(self.line).strip()
 
@@ -361,7 +394,18 @@ class Interpreter:
 											raise SyntaxError
 
 						except IndexError:
-							pass
+							if self.functions[command][0] == {"": ""}:
+								pass
+							else:
+								syntaxerror = Error(
+									"SyntaxError",
+									"Missing arguments",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								syntaxerror.print_stacktrace()
+							
 						except SyntaxError:
 							syntaxerror = Error(
 								"SyntaxError",
@@ -381,19 +425,33 @@ class Interpreter:
 								self.functions[command][0][args[i]] = type[1]
 
 						except IndexError:
-							self.functions[command][0] = self.vars
+							print("index error")
 
-						for arg in self.functions[command][1]:
-							interpreter = Interpreter(
-								arg,
-								self.functions[command][0],
-								self.functions,
-								self.isFunction,
-								self.function,
+						if params == list(self.functions[command][0].keys()):
+							for arg in self.functions[command][1]:
+								interpreter = Interpreter(
+									arg,
+									self.functions[command][0],
+									self.functions,
+									self.isFunction,
+									self.function,
+									self.lineno,
+									self.location
+								)
+								interpreter.interpret()
+
+						else:
+							for i in range(len(params)):
+								params[i] = f"'{params[i]}'"
+							unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
+							paramerror = Error(
+								"ParamError",
+								f"Unexpected parameter(s) {unexpected}",
+								self.og_line,
 								self.lineno,
 								self.location
 							)
-							interpreter.interpret()
+							paramerror.print_stacktrace()
 
 					else:
 						syntaxerror = Error(

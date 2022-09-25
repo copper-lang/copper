@@ -1,0 +1,14 @@
+proc(add(x, y))
+	set(sum, x + y)
+	out(sum)
+endproc
+
+set(x, in("Enter first number: "))
+cast(x, integer)
+
+set(y, in("Enter second number: "))
+cast(y, integer)
+
+set(operand, in("Enter operation (+, -, *, /): "))
+
+if(operand == "+", add(x, y))
