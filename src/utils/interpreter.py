@@ -544,7 +544,7 @@ class Interpreter:
 							self.location
 						)
 						syntaxerror.print_stacktrace()
-				
+
 				else:
 					commanderror = Error(
 						"CommandError",
