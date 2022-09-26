@@ -416,32 +416,7 @@ class Interpreter:
 							)
 							syntaxerror.print_stacktrace()
 
-						try:
-							for i in range(len(params)):
-								object = Object(params[i], self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
-								type = object.checkType()
-	
-								args = list(self.functions[command][0].keys())
-								self.functions[command][0][args[i]] = type[1]
-
-						except IndexError:
-							for i in range(len(params)):
-								params[i] = f"'{params[i]}'"
-							unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
-							paramerror = Error(
-								"ParamError",
-								f"Unexpected parameter(s) {unexpected}",
-								self.og_line,
-								self.lineno,
-								self.location
-							)
-							paramerror.print_stacktrace()
-
-						args = []
-						for arg in self.functions[command][0]:
-							args.append(str(self.functions[command][0][arg].literal))
-						
-						if params == args:
+						if "".join(params) == "" and "".join(list(self.functions[command][0])) == "":
 							for arg in self.functions[command][1]:
 								interpreter = Interpreter(
 									arg,
@@ -453,19 +428,58 @@ class Interpreter:
 									self.location
 								)
 								interpreter.interpret()
-
+								
 						else:
-							for i in range(len(params)):
-								params[i] = f"'{params[i]}'"
-							unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
-							paramerror = Error(
-								"ParamError",
-								f"Unexpected parameter(s) {unexpected}",
-								self.og_line,
-								self.lineno,
-								self.location
-							)
-							paramerror.print_stacktrace()
+							try:
+								for i in range(len(params)):
+									object = Object(params[i], self.vars, self.functions, self.isFunction, self.function, self.og_line, self.lineno, self.location)
+									type = object.checkType()
+		
+									args = list(self.functions[command][0].keys())
+									self.functions[command][0][args[i]] = type[1]
+	
+							except IndexError:
+								for i in range(len(params)):
+									params[i] = f"'{params[i]}'"
+								unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
+								paramerror = Error(
+									"ParamError",
+									f"Unexpected parameter(s) {unexpected}",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								paramerror.print_stacktrace()
+	
+							args = []
+							for arg in self.functions[command][0]:
+								args.append(str(self.functions[command][0][arg].literal))
+							
+							if params == args:
+								for arg in self.functions[command][1]:
+									interpreter = Interpreter(
+										arg,
+										self.functions[command][0],
+										self.functions,
+										self.isFunction,
+										self.function,
+										self.lineno,
+										self.location
+									)
+									interpreter.interpret()
+	
+							else:
+								for i in range(len(params)):
+									params[i] = f"'{params[i]}'"
+								unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
+								paramerror = Error(
+									"ParamError",
+									f"Unexpected parameter(s) {unexpected}",
+									self.og_line,
+									self.lineno,
+									self.location
+								)
+								paramerror.print_stacktrace()
 
 					else:
 						syntaxerror = Error(

@@ -58,7 +58,7 @@ class Object:
 					decimal = Float(result, self.line, self.lineno, self.location)
 					return "math", decimal
 
-			except SyntaxError:
+			except (SyntaxError, NameError):
 				try:
 					integer = Integer(int("".join(self.object)), self.line, self.lineno, self.location)
 					return "integer", integer

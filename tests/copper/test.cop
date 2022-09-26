@@ -1,6 +1,6 @@
-proc(add(x, y))
-	set(sum, x + y)
-	out(sum)
+proc(returnTest())
+	return(-1)
 endproc
 
-add(1, 1)
+set(x, returnTest())
+out(x)
