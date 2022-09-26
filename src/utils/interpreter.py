@@ -425,9 +425,23 @@ class Interpreter:
 								self.functions[command][0][args[i]] = type[1]
 
 						except IndexError:
-							print("index error")
+							for i in range(len(params)):
+								params[i] = f"'{params[i]}'"
+							unexpected = ", ".join(params[len(params) - (len(params) - len(self.functions[command][0])):])
+							paramerror = Error(
+								"ParamError",
+								f"Unexpected parameter(s) {unexpected}",
+								self.og_line,
+								self.lineno,
+								self.location
+							)
+							paramerror.print_stacktrace()
 
-						if params == list(self.functions[command][0].keys()):
+						args = []
+						for arg in self.functions[command][0]:
+							args.append(str(self.functions[command][0][arg].literal))
+						
+						if params == args:
 							for arg in self.functions[command][1]:
 								interpreter = Interpreter(
 									arg,
