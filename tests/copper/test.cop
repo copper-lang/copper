@@ -1,6 +1,1 @@
-proc(returnTest())
-	return(-1)
-endproc
-
-set(x, returnTest())
-out(x)
+set(test, [1, 2, 3, 4, 5, "Hello, ___"])
