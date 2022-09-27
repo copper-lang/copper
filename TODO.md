@@ -1,6 +1,3 @@
-+ Error Fixes
-  - [x] Missing commas in functions
-
 - [x] Functions
   - [x] Parameters
   - [ ] Return
@@ -8,6 +5,7 @@
   - [x] If
   - [ ] Else
   - [ ] Elseif
+- [ ] Lists
 - [ ] While Loop
 - [ ] For Loop
 - [ ] Escape Characters
