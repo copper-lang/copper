@@ -26,29 +26,37 @@ class Lexer:
 			self.line.pop()
 
 			commas = []
+			spaces = []
 			for i, char in enumerate("".join(self.line)):
 				if char == ",":
 					commas.append(i)
+				elif char == " ":
+					spaces.append(i)
 
 			args = "".join(self.line).split(",")
 
 			try:
 				for i in range(len(args)):
-					if (args[i][0] == "\"" and args[i][-1] != "\"") and (args[i+1][0] != "\"" and args[i+1][-1] == "\""):
+					if (args[i].strip()[0] == "\"" and args[i].strip()[-1] != "\"") and (args[i+1].strip()[0] != "\"" and args[i+1].strip()[-1] == "\""):
 						args[i] += args[i+1]
 						args.pop(i+1)
 
-					elif (args[i-1][0] == "\"" and args[i-1][-1] != "\"") and (args[i][0] != "\"" and args[i][-1] != "\"") and (args[i+1][0] != "\"" and args[i+1][-1] == "\""):
-						args[i-1] += args[i]
-						args[i-1] += args[i+1]
-						args.pop(i+1)
-						args.pop(i)
+					else:
+						arg = ""
+						index = i
+						while True:
+							if args[index][-1] == "\"":
+								arg += args[index]
+								args.pop(index)
+								break
+
+							else:
+								arg += args[index] + ","
+								args.pop(index)
+
+						args.insert(i, arg.strip())
 
 			except IndexError:
 				pass
 
-			for i in range(len(commas)):
-				if i == commas[i]:
-					self.line = list("".join(self.line[i:]) + "," + "".join(self.line[:i]))
-
-			print("".join(self.line))
+			print(args)
