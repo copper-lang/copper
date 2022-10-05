@@ -1,1 +1,1 @@
-out("this is a print statement, not input, nor variable setting,", "test")
+out("this is a print statement")

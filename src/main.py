@@ -1,5 +1,6 @@
-import sys
+import sys, os
 from utils.lexer import Lexer
+from utils.error import Error
 
 print("Enter filepath:")
 filepath = input(">>> ")
@@ -11,10 +12,17 @@ except FileNotFoundError:
 	sys.exit()
 else:
 	lines = file.readlines()
-
+	location = os.getcwd() + "/" + filepath
 	lineno = 1
+
 	for line in lines:
-		lexer = Lexer(line)
-		lexer.lex()
+		error = Error(
+			line,
+			lineno,
+			location
+		)
+		
+		lexer = Lexer(line, error)
+		tokens = lexer.lex()
 		
 		lineno += 1
