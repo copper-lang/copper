@@ -10,7 +10,8 @@ class Lexer:
 	
 		self.builtins = {
 			"out": Tokens.Procs.Builtins.Output(),
-			"in": Tokens.Procs.Builtins.Input()
+			"in": Tokens.Procs.Builtins.Input(),
+			"set": Tokens.Procs.Builtins.Variable()
 		}
 	
 	def lex(self) -> dict:
@@ -22,42 +23,49 @@ class Lexer:
 	
 		for char in proc:
 			self.line.remove(char)
-	
-		self.tokens["PROC"] = self.builtins[proc]
+
+		try:
+			self.tokens["PROC"] = self.builtins[proc]
+		except KeyError:
+			self.error.print_stacktrace("ProcError", f"Unknown procedure '{proc}'")
 	
 		if self.line[0] == "(" and self.line[-1] == ")":
 			self.line = self.line[1:-1]
 	
 			commas = []
-			spaces = []
 			for i, char in enumerate("".join(self.line)):
 				if char == ",":
 					commas.append(i)
-				elif char == " ":
-					spaces.append(i)
 	
 			args = "".join(self.line).split(",")
+			for i in range(len(args)):
+				args[i] = args[i].strip()
 	
 			try:
 				for i in range(len(args)):
-					if (args[i].strip()[0] == "\"" and args[i].strip()[-1] != "\"") and (args[i+1].strip()[0] != "\"" and args[i+1].strip()[-1] == "\""):
+					if args[i][0] == "\"" and args[i][-1] == "\"":
+						pass
+					
+					elif (args[i][0] == "\"" and args[i][-1] != "\"") and (args[i+1][0] != "\"" and args[i+1][-1] == "\""):
 						args[i] += args[i+1]
 						args.pop(i+1)
 	
-					else:
+					elif (args[i][0] == "\"" and args[i][-1] != "\"") and args[i+1][-1] == "\"":
 						arg = ""
-						index = i
 						while True:
-							if args[index][-1] == "\"":
-								arg += args[index]
-								args.pop(index)
+							if args[i][-1] == "\"":
+								arg += args[i]
+								args.pop(i)
 								break
 	
 							else:
-								arg += args[index] + ","
-								args.pop(index)
+								arg += args[i] + ","
+								args.pop(i)
 	
-						args.insert(i, arg.strip())
+						args.insert(i, arg)
+
+					else:
+						pass
 	
 			except IndexError:
 				pass
@@ -66,10 +74,12 @@ class Lexer:
 			for arg in args:
 				if arg[0] == "\"" and arg[-1] == "\"":
 					self.tokens["ARGS"].append(Tokens.Literals.String(arg[1:-1]))
-	
 				else:
-					self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
-	
+					if proc == "set":
+						self.tokens["ARGS"].append(arg)
+					else:
+						self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
+
 			return self.tokens
 	
 		else:

@@ -9,6 +9,9 @@ class Tokens:
 			class Input:
 				pass
 
+			class Variable:
+				pass
+
 	class Literals:
 		class String(String):
 			def __init__(self, string):

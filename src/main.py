@@ -16,6 +16,8 @@ else:
 	location = os.getcwd() + "/" + filepath
 	lineno = 1
 
+	variables = {}
+
 	for line in lines:
 		error = Error(
 			line,
@@ -26,7 +28,7 @@ else:
 		lexer = Lexer(line, error)
 		tokens = lexer.lex()
 
-		interpreter = Interpreter(tokens, error)
-		interpreter.interpret()
+		interpreter = Interpreter(tokens, variables, error)
+		variables = interpreter.interpret()
 
 		lineno += 1

@@ -3,7 +3,7 @@
 - [x] Output
 - [x] Input
 - [ ] Variables
-	- [ ] String
+	- [x] String
 	- [ ] Integer (int)
 	- [ ] Float
 	- [ ] Boolean (bool)
