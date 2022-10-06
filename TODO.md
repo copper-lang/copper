@@ -1,7 +1,7 @@
-- [ ] Lexing System
-- [ ] Interpreter System
-- [ ] Output
-- [ ] Input
+- [x] Lexing System
+- [x] Interpreter System
+- [x] Output
+- [x] Input
 - [ ] Variables
 	- [ ] String
 	- [ ] Integer (int)
