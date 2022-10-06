@@ -1,4 +1,5 @@
 from .tokens import Tokens
+
 class Lexer:
 	def __init__(self, line, error):
 		self.line = list(line)
@@ -57,28 +58,41 @@ class Lexer:
 								arg += args[i]
 								args.pop(i)
 								break
-	
+
 							else:
 								arg += args[i] + ","
 								args.pop(i)
-	
+
 						args.insert(i, arg)
 
 					else:
 						pass
-	
+
 			except IndexError:
 				pass
 	
 			self.tokens["ARGS"] = []
+			isVar = False
 			for arg in args:
 				if arg[0] == "\"" and arg[-1] == "\"":
 					self.tokens["ARGS"].append(Tokens.Literals.String(arg[1:-1]))
 				else:
-					if proc == "set":
+					if proc == "set" and isVar == False:
 						self.tokens["ARGS"].append(arg)
+						isVar = True
 					else:
-						self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
+						try:
+							integer = int(arg)
+							self.tokens["ARGS"].append(Tokens.Literals.Integer(integer))
+						except ValueError:
+							try:
+								decimal = float(arg)
+								self.tokens["ARGS"].append(Tokens.Literals.Float(decimal))
+							except ValueError:
+								if arg == "True" or arg == "False":
+									self.tokens["ARGS"].append(Tokens.Literals.Boolean(arg == "True"))
+								else:
+									self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
 
 			return self.tokens
 	

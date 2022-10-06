@@ -4,6 +4,7 @@
 - [x] Input
 - [ ] Variables
 	- [x] String
-	- [ ] Integer (int)
-	- [ ] Float
-	- [ ] Boolean (bool)
+	- [x] Integer (int)
+	- [x] Float
+	- [x] Boolean (bool)
+    - [ ] Reference in Strings

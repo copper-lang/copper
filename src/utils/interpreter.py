@@ -14,6 +14,9 @@ class Interpreter:
 			input(self.tokens["ARGS"][0].literal)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Variable):
-			self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
+			try:
+				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
+			except IndexError:
+				self.error.print_stacktrace("LiteralError", "No literal provided")
 
 		return self.variables
