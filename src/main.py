@@ -19,16 +19,21 @@ else:
 	variables = {}
 
 	for line in lines:
-		error = Error(
-			line,
-			lineno,
-			location
-		)
-
-		lexer = Lexer(line, error)
-		tokens = lexer.lex()
-
-		interpreter = Interpreter(tokens, variables, error)
-		variables = interpreter.interpret()
+		if line == "\n" or line[:2] == "//":
+			pass
+		else:
+			error = Error(
+				line,
+				lineno,
+				location
+			)
+	
+			lexer = Lexer(line, error)
+			tokens = lexer.lex()
+	
+			interpreter = Interpreter(tokens, variables, error)
+			variables = interpreter.interpret()
 
 		lineno += 1
+
+	print(variables)

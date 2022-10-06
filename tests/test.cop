@@ -1,1 +1,19 @@
-set(x, True)
+// This is a comment
+
+// This prints text
+out("text")
+
+// This prompts the user
+in(">>> ")
+
+// String variable
+set(name, "Kryllyx")
+
+// Integer variable
+set(life, 42)
+
+// Float variable
+set(pi, 3.14)
+
+// Boolean variable
+set(programWorks, True)
