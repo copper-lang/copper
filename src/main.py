@@ -1,5 +1,6 @@
 import sys, os
 from utils.lexer import Lexer
+from utils.interpreter import Interpreter
 from utils.error import Error
 
 print("Enter filepath:")
@@ -21,8 +22,11 @@ else:
 			lineno,
 			location
 		)
-		
+
 		lexer = Lexer(line, error)
 		tokens = lexer.lex()
-		
+
+		interpreter = Interpreter(tokens, error)
+		interpreter.interpret()
+
 		lineno += 1
