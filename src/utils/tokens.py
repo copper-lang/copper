@@ -6,6 +6,9 @@ class Tokens:
 			class Output:
 				pass
 
+			class Input:
+				pass
+
 	class Literals:
 		class String(String):
 			def __init__(self, string):

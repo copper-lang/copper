@@ -2,11 +2,15 @@ from .tokens import Tokens
 class Lexer:
 	def __init__(self, line, error):
 		self.line = list(line)
+		if line[-1] == "\n":
+			self.line.pop()
+		
 		self.error = error
 		self.tokens = {}
 	
 		self.builtins = {
-			"out": Tokens.Procs.Builtins.Output()
+			"out": Tokens.Procs.Builtins.Output(),
+			"in": Tokens.Procs.Builtins.Input()
 		}
 	
 	def lex(self) -> dict:

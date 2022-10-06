@@ -8,3 +8,6 @@ class Interpreter:
 	def interpret(self):
 		if isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Output):
 			print(self.tokens["ARGS"][0].literal)
+
+		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
+			input(self.tokens["ARGS"][0].literal)

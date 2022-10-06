@@ -1,1 +1,2 @@
 out("this is a print statement")
+in("this is input ")
