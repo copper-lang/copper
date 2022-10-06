@@ -28,12 +28,10 @@ else:
 				location
 			)
 	
-			lexer = Lexer(line, error)
+			lexer = Lexer(line, variables, error)
 			tokens = lexer.lex()
 	
 			interpreter = Interpreter(tokens, variables, error)
 			variables = interpreter.interpret()
 
 		lineno += 1
-
-	print(variables)

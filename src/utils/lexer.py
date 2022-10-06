@@ -1,11 +1,12 @@
 from .tokens import Tokens
 
 class Lexer:
-	def __init__(self, line, error):
+	def __init__(self, line, variables, error):
 		self.line = list(line)
 		if line[-1] == "\n":
 			self.line.pop()
-		
+			
+		self.variables = variables
 		self.error = error
 		self.tokens = {}
 	
@@ -39,22 +40,16 @@ class Lexer:
 					commas.append(i)
 	
 			args = "".join(self.line).split(",")
-			for i in range(len(args)):
-				args[i] = args[i].strip()
 	
 			try:
 				for i in range(len(args)):
-					if args[i][0] == "\"" and args[i][-1] == "\"":
+					if args[i].strip()[0] == "\"" and args[i].strip()[-1] == "\"":
 						pass
 					
-					elif (args[i][0] == "\"" and args[i][-1] != "\"") and (args[i+1][0] != "\"" and args[i+1][-1] == "\""):
-						args[i] += args[i+1]
-						args.pop(i+1)
-	
-					elif (args[i][0] == "\"" and args[i][-1] != "\"") and args[i+1][-1] == "\"":
+					elif ((args[i].strip()[0] == "\"" or args[i].strip()[0] + args[i].strip()[1] == "$\"") and args[i].strip()[-1] != "\"") and args[i+1].strip()[-1] == "\"":
 						arg = ""
 						while True:
-							if args[i][-1] == "\"":
+							if args[i].strip()[-1] == "\"":
 								arg += args[i]
 								args.pop(i)
 								break
@@ -74,8 +69,8 @@ class Lexer:
 			self.tokens["ARGS"] = []
 			isVar = False
 			for arg in args:
-				if arg[0] == "\"" and arg[-1] == "\"":
-					self.tokens["ARGS"].append(Tokens.Literals.String(arg[1:-1]))
+				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
+					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
 				else:
 					if proc == "set" and isVar == False:
 						self.tokens["ARGS"].append(arg)
@@ -89,12 +84,23 @@ class Lexer:
 								decimal = float(arg)
 								self.tokens["ARGS"].append(Tokens.Literals.Float(decimal))
 							except ValueError:
-								if arg == "True" or arg == "False":
-									self.tokens["ARGS"].append(Tokens.Literals.Boolean(arg == "True"))
+								if arg.strip() == "True" or arg.strip() == "False":
+									self.tokens["ARGS"].append(Tokens.Literals.Boolean(arg.strip() == "True"))
 								else:
-									self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
+									if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
+										self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
+									
+									else:
+										self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
 
 			return self.tokens
 	
 		else:
 			self.error.print_stacktrace("SyntaxError", "Missing parentheses")
+
+	def addVars(self, string):
+		for variable in self.variables.keys():
+			if f"%{variable}%" in string:
+				string = string.replace(f"%{variable}%", str(self.variables[variable].literal))
+
+		return string[1:]

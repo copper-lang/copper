@@ -7,4 +7,6 @@
 	- [x] Integer (int)
 	- [x] Float
 	- [x] Boolean (bool)
-    - [ ] Reference in Strings
+    - [x] Reference in Strings
+    - [ ] Save input to a variable
+- [ ] Type Casting (cast)

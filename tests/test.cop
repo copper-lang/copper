@@ -1,19 +1,7 @@
-// This is a comment
-
-// This prints text
-out("text")
-
-// This prompts the user
-in(">>> ")
-
-// String variable
 set(name, "Kryllyx")
 
-// Integer variable
-set(life, 42)
+// This uses the variable
+out($"Hello, %name%.")
 
-// Float variable
-set(pi, 3.14)
-
-// Boolean variable
-set(programWorks, True)
+// This does not
+out("Hello, %name%.")
