@@ -1,2 +1,2 @@
-set(name, in("What's your name? "))
-out($"Hello, %name%.")
+set(name, "Kryllyx")
+out(name)
