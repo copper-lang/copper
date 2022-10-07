@@ -8,5 +8,7 @@
 	- [x] Float
 	- [x] Boolean (bool)
     - [x] Reference in Strings
-    - [ ] Save input to a variable
+    - [x] Save input to a variable
+    - [ ] Math
+    - [ ] Boolean Expressions
 - [ ] Type Casting (cast)
