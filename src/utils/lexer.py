@@ -1,4 +1,5 @@
 from .tokens import Tokens
+from .interpreter import Interpreter
 
 class Lexer:
 	def __init__(self, line, variables, error):
@@ -14,6 +15,9 @@ class Lexer:
 			"out": Tokens.Procs.Builtins.Output(),
 			"in": Tokens.Procs.Builtins.Input(),
 			"set": Tokens.Procs.Builtins.Variable()
+		}
+		self.returns = {
+			"in": Tokens.Procs.Builtins.Input()
 		}
 	
 	def lex(self) -> dict:
@@ -89,9 +93,18 @@ class Lexer:
 								else:
 									if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
 										self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
-									
 									else:
-										self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg}') passed as argument")
+										isProc = False
+										for returns in self.returns.keys():
+											if arg.strip()[:len(returns)] == returns:
+												isProc = True
+												proc = arg.strip()[:len(returns)]
+
+										if isProc:
+											self.tokens["ARGS"].append(arg.strip())
+											self.tokens["LEXER"] = Lexer
+										else:
+											self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg.strip()}') passed as argument")
 
 			return self.tokens
 	

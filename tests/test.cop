@@ -1,7 +1,2 @@
-set(name, "Kryllyx")
-
-// This uses the variable
+set(name, in("What's your name? "))
 out($"Hello, %name%.")
-
-// This does not
-out("Hello, %name%.")
