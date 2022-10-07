@@ -76,6 +76,10 @@ class Lexer:
             for arg in args:
                 if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
                     self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
+                
+                elif (arg.strip()[0] == "\"" and arg.strip()[-1] != "\"") or (arg.strip()[0] != "\"" and arg.strip()[-1] == "\""):
+                    self.error.print_stacktrace("SyntaxError", f"Missing quotation marks in argument '{arg.strip()}'")
+                
                 else:
                     if proc == "set" and isVar == False:
                         self.tokens["ARGS"].append(arg)
@@ -108,7 +112,7 @@ class Lexer:
                                             if arg.strip() in self.variables.keys():
                                                 self.tokens["ARGS"].append(self.variables[arg.strip()])
                                             else:
-                                                self.error.print_stacktrace("LiteralError", f"Invalid literal ('{arg.strip()}') passed as argument")
+                                                self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
 
             return self.tokens
 
