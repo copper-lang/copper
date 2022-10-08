@@ -132,3 +132,6 @@ dmypy.json
 .config
 .replit
 replit.nix
+
+# Copper Test Files
+test.cop

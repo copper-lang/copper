@@ -12,6 +12,11 @@ class Interpreter:
 
 	def interpret(self) -> dict:
 		if isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Output):
+			if len(self.tokens["ARGS"]) > 1:
+				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 1):]
+				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
+				self.error.print_stacktrace("ArgError", f"Extra arguments {extra}")
+
 			print(self.tokens["ARGS"][0].literal)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
@@ -21,7 +26,7 @@ class Interpreter:
 			try:
 				for returns in self.returns.keys():
 					if self.tokens["ARGS"][1][:len(returns)] == returns:
-						isProc = True
+						break
 
 				Lexer = self.tokens["LEXER"]
 				lexer = Lexer(self.tokens["ARGS"][1], self.variables, self.error)
