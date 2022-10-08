@@ -107,7 +107,7 @@ class Lexer:
                                             
                                             variables = {}
                                             for variable in self.variables.keys():
-                                                variables[variable] = self.variables[variable]
+                                                variables[variable] = self.variables[variable].literal
                                             
                                             eq = eval(arg.strip(), variables)
                 

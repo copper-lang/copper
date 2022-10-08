@@ -1,3 +1,5 @@
 set(x, 26)
 set(y, 4)
 set(z, x + y)
+
+out(z)

@@ -9,6 +9,6 @@
 	- [x] Boolean (bool)
     - [x] Reference in Strings
     - [x] Save input to a variable
-    - [ ] Math
+    - [x] Math
     - [ ] Boolean Expressions
 - [ ] Type Casting (cast)
