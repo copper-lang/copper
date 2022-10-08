@@ -76,10 +76,12 @@ class Lexer:
             for arg in args:
                 if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
                     self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
-                
                 elif (arg.strip()[0] == "\"" and arg.strip()[-1] != "\"") or (arg.strip()[0] != "\"" and arg.strip()[-1] == "\""):
+                    for returns in self.returns.keys():
+                        if arg.strip()[:len(returns)] == returns:
+                            self.error.print_stacktrace("SyntaxError", f"Missing parentheses in procedure call '{returns}'")
+                    
                     self.error.print_stacktrace("SyntaxError", f"Missing quotation marks in argument '{arg.strip()}'")
-                
                 else:
                     if proc == "set" and isVar == False:
                         self.tokens["ARGS"].append(arg)
