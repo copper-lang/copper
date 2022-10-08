@@ -98,23 +98,40 @@ class Lexer:
                                 if arg.strip() == "True" or arg.strip() == "False":
                                     self.tokens["ARGS"].append(Tokens.Literals.Boolean(arg.strip() == "True"))
                                 else:
-                                    if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
-                                        self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
+                                    if arg.strip() in self.variables.keys():
+                                        self.tokens["ARGS"].append(self.variables[arg.strip()])
                                     else:
-                                        isProc = False
-                                        for returns in self.returns.keys():
-                                            if arg.strip()[:len(returns)] == returns:
-                                                isProc = True
-                                                proc = arg.strip()[:len(returns)]
-
-                                        if isProc:
-                                            self.tokens["ARGS"].append(arg.strip())
-                                            self.tokens["LEXER"] = Lexer
-                                        else:
-                                            if arg.strip() in self.variables.keys():
-                                                self.tokens["ARGS"].append(self.variables[arg.strip()])
+                                        try:
+                                            if "^" in arg.strip():
+                                                arg = arg.replace("^", "**")
+                                            
+                                            variables = {}
+                                            for variable in self.variables.keys():
+                                                variables[variable] = self.variables[variable]
+                                            
+                                            eq = eval(arg.strip(), variables)
+                
+                                            if isinstance(eq, int):
+                                                self.tokens["ARGS"].append(Tokens.Literals.Integer(eq))
                                             else:
-                                                self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
+                                                self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
+                                        except SyntaxError:
+                                            if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
+                                                self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
+                                            else:
+                                                isProc = False
+                                                for returns in self.returns.keys():
+                                                    if arg.strip()[:len(returns)] == returns:
+                                                        isProc = True
+                                                        proc = arg.strip()[:len(returns)]
+
+                                                if isProc:
+                                                    self.tokens["ARGS"].append(arg.strip())
+                                                    self.tokens["LEXER"] = Lexer
+                                                else:
+                                                    self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
+                                        except NameError:
+                                            self.error.print_stacktrace("VarError", f"Unknown variable '{arg.strip()}'")
 
             return self.tokens
 

@@ -1,2 +1,3 @@
-set(name, in("test "))
-out(name)
+set(x, 26)
+set(y, 4)
+set(z, x + y)
