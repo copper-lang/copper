@@ -2,7 +2,7 @@
 - [x] Interpreter System
 - [x] Output
 - [x] Input
-- [ ] Variables
+- [x] Variables
 	- [x] String
 	- [x] Integer (int)
 	- [x] Float
@@ -10,5 +10,6 @@
     - [x] Reference in Strings
     - [x] Save input to a variable
     - [x] Math
-    - [ ] Boolean Expressions
+    - [x] Boolean Expressions
 - [ ] Type Casting (cast)
+- [ ] Round

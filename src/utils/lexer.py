@@ -101,7 +101,7 @@ class Lexer:
 										self.tokens["ARGS"].append(self.variables[arg.strip()])
 									else:
 										try:
-											if "^" in arg.strip():
+											if "^" in arg:
 												arg = arg.replace("^", "**")
 											
 											variables = {}
@@ -109,11 +109,14 @@ class Lexer:
 												variables[variable] = self.variables[variable].literal
 											
 											eq = eval(arg.strip(), variables)
-				
-											if isinstance(eq, int):
+
+											if isinstance(eq, bool):
+												self.tokens["ARGS"].append(Tokens.Literals.Boolean(eq))
+											elif isinstance(eq, int):
 												self.tokens["ARGS"].append(Tokens.Literals.Integer(eq))
-											else:
+											elif isinstance(eq, float):
 												self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
+											
 										except (SyntaxError, NameError):
 											if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
 												self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))

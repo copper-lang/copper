@@ -1,1 +1,5 @@
-out("test")
+set(x, 10)
+set(y, 20)
+set(z, x*2 <= y)
+
+out(z)
