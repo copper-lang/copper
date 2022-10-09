@@ -11,5 +11,5 @@
     - [x] Save input to a variable
     - [x] Math
     - [x] Boolean Expressions
-- [ ] Type Casting (cast)
+- [x] Type Casting (cast)
 - [ ] Round

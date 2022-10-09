@@ -9,6 +9,7 @@ class Tokens:
 			class Output: pass
 			class Input: pass
 			class Variable: pass
+			class Cast: pass
 
 	class Literals:
 		class String(String):

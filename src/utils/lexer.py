@@ -14,11 +14,18 @@ class Lexer:
 		self.builtins = {
 			"out": Tokens.Procs.Builtins.Output(),
 			"in": Tokens.Procs.Builtins.Input(),
-			"set": Tokens.Procs.Builtins.Variable()
+			"set": Tokens.Procs.Builtins.Variable(),
+			"cast": Tokens.Procs.Builtins.Cast()
 		}
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input()
 		}
+		self.types = [
+			"string",
+			"int",
+			"float",
+			"bool"
+		]
 	
 	def lex(self) -> dict:
 		proc = ""
@@ -85,6 +92,8 @@ class Lexer:
 					if proc == "set" and isVar == False:
 						self.tokens["ARGS"].append(arg)
 						isVar = True
+					elif proc == "cast":
+						self.tokens["ARGS"] = [arg.strip() for arg in args]
 					else:
 						try:
 							integer = int(arg)
@@ -100,43 +109,46 @@ class Lexer:
 									if arg.strip() in self.variables.keys():
 										self.tokens["ARGS"].append(self.variables[arg.strip()])
 									else:
-										try:
-											if "^" in arg:
-												arg = arg.replace("^", "**")
-											
-											variables = {}
-											for variable in self.variables.keys():
-												variables[variable] = self.variables[variable].literal
-											
-											eq = eval(arg.strip(), variables)
-
-											if isinstance(eq, bool):
-												self.tokens["ARGS"].append(Tokens.Literals.Boolean(eq))
-											elif isinstance(eq, int):
-												self.tokens["ARGS"].append(Tokens.Literals.Integer(eq))
-											elif isinstance(eq, float):
-												self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
-											
-										except (SyntaxError, NameError):
-											if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
-												self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
-											else:
-												isProc = False
-												for returns in self.returns.keys():
-													if arg.strip()[:len(returns)] == returns:
-														isProc = True
-														proc = arg.strip()[:len(returns)]
+										if arg.strip() in self.types:
+											self.tokens["ARGS"].append(arg.strip())
+										else:
+											try:
+												if "^" in arg:
+													arg = arg.replace("^", "**")
+												
+												variables = {}
+												for variable in self.variables.keys():
+													variables[variable] = self.variables[variable].literal
+												
+												eq = eval(arg.strip(), variables)
 	
-												if isProc:
-													self.tokens["ARGS"].append(arg.strip())
-													self.tokens["LEXER"] = Lexer
+												if isinstance(eq, bool):
+													self.tokens["ARGS"].append(Tokens.Literals.Boolean(eq))
+												elif isinstance(eq, int):
+													self.tokens["ARGS"].append(Tokens.Literals.Integer(eq))
+												elif isinstance(eq, float):
+													self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
+												
+											except (SyntaxError, NameError):
+												if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
+													self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
 												else:
-													for builtin in self.builtins.keys():
-														if arg.strip()[:len(builtin)] == builtin:
-															self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
-													
-													self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
-	
+													isProc = False
+													for returns in self.returns.keys():
+														if arg.strip()[:len(returns)] == returns:
+															isProc = True
+															proc = arg.strip()[:len(returns)]
+		
+													if isProc:
+														self.tokens["ARGS"].append(arg.strip())
+														self.tokens["LEXER"] = Lexer
+													else:
+														for builtin in self.builtins.keys():
+															if arg.strip()[:len(builtin)] == builtin:
+																self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
+														
+														self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
+
 			return self.tokens
 	
 		else:

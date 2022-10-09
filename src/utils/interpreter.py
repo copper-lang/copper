@@ -1,3 +1,4 @@
+import builtins
 from .tokens import Tokens
 
 class Interpreter:
@@ -8,6 +9,12 @@ class Interpreter:
 
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input()
+		}
+		self.types = {
+			"String": "string",
+			"Integer": "int",
+			"Float": "float",
+			"Boolean": "bool"
 		}
 
 	def interpret(self) -> dict:
@@ -53,4 +60,22 @@ class Interpreter:
 			except TypeError:
 				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
 
+		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Cast):
+			try:
+				if self.tokens["ARGS"][1] == "string":
+					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.String(str(self.variables[self.tokens["ARGS"][0]].literal))
+	
+				elif self.tokens["ARGS"][1] == "int":
+					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Integer(int(self.variables[self.tokens["ARGS"][0]].literal))
+				
+				elif self.tokens["ARGS"][1] == "float":
+					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Float(float(self.variables[self.tokens["ARGS"][0]].literal))
+	
+				elif self.tokens["ARGS"][1] == "bool":
+					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Boolean(self.variables[self.tokens["ARGS"][0]].literal == "True" or self.variables[self.tokens["ARGS"][0]].literal == True)
+				else:
+					self.error.print_stacktrace("ConversionTypeError", f"Invalid conversion type '{self.tokens['ARGS'][1]}'")
+			except ValueError:
+				self.error.print_stacktrace("ConversionError", f"Could not convert '{self.variables[self.tokens['ARGS'][0]].literal}' (type '{self.types[self.variables[self.tokens['ARGS'][0]].__class__.__name__]}') to '{self.tokens['ARGS'][1]}'")
+		
 		return self.variables
