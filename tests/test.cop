@@ -1,8 +1,6 @@
 set(x, in("Enter a number: "))
-cast(x, int)
+cast(x, float)
+out(x)
 
-set(y, in("Enter a number: "))
-cast(y, int)
-
-set(z, x + y)
-out(z)
+set(x, round(x, "nearest"))
+out(x)

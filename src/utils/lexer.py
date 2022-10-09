@@ -15,10 +15,12 @@ class Lexer:
 			"out": Tokens.Procs.Builtins.Output(),
 			"in": Tokens.Procs.Builtins.Input(),
 			"set": Tokens.Procs.Builtins.Variable(),
-			"cast": Tokens.Procs.Builtins.Cast()
+			"cast": Tokens.Procs.Builtins.Cast(),
+			"round": Tokens.Procs.Builtins.Round()
 		}
 		self.returns = {
-			"in": Tokens.Procs.Builtins.Input()
+			"in": Tokens.Procs.Builtins.Input(),
+			"round": Tokens.Procs.Builtins.Round()
 		}
 		self.types = [
 			"string",
@@ -71,12 +73,9 @@ class Lexer:
 	
 						args.insert(i, arg)
 	
-					else:
-						pass
-	
 			except IndexError:
 				pass
-	
+ 
 			self.tokens["ARGS"] = []
 			isVar = False
 			for arg in args:
@@ -86,8 +85,14 @@ class Lexer:
 					for returns in self.returns.keys():
 						if arg.strip()[:len(returns)] == returns:
 							self.error.print_stacktrace("SyntaxError", f"Missing parentheses in procedure call '{returns}'")
-					
-					self.error.print_stacktrace("SyntaxError", f"Missing quotation marks in argument '{arg.strip()}'")
+     
+					isProc = False
+					for returns in self.returns.keys():
+						if args[args.index(arg)-1].strip()[:len(returns)] == returns:
+							isProc = True
+
+					if isProc == False:
+						self.error.print_stacktrace("SyntaxError", f"Missing quotation marks in argument '{arg.strip()}'")
 				else:
 					if proc == "set" and isVar == False:
 						self.tokens["ARGS"].append(arg)
@@ -137,11 +142,28 @@ class Lexer:
 													for returns in self.returns.keys():
 														if arg.strip()[:len(returns)] == returns:
 															isProc = True
-															proc = arg.strip()[:len(returns)]
 		
 													if isProc:
 														self.tokens["ARGS"].append(arg.strip())
 														self.tokens["LEXER"] = Lexer
+
+														if len(self.tokens["ARGS"]) < len(args):
+															isProc = False
+															for returns in self.returns.keys():
+																if args[args.index(arg)].strip()[:len(returns)] == returns:
+																	isProc = True
+              
+															if isProc:
+																_args = []
+																i = args.index(arg)
+																while args[i][-1] != ")":
+																	_args.append(args[i])
+																	i += 1
+																_args.append(args[i])
+
+																self.tokens["ARGS"].pop() 
+																self.tokens["ARGS"].append((",".join(_args)).strip())
+              
 													else:
 														for builtin in self.builtins.keys():
 															if arg.strip()[:len(builtin)] == builtin:

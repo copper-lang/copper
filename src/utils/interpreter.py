@@ -1,4 +1,4 @@
-import builtins
+import math
 from .tokens import Tokens
 
 class Interpreter:
@@ -8,7 +8,8 @@ class Interpreter:
 		self.error = error
 
 		self.returns = {
-			"in": Tokens.Procs.Builtins.Input()
+			"in": Tokens.Procs.Builtins.Input(),
+			"round": Tokens.Procs.Builtins.Round()
 		}
 		self.types = {
 			"String": "string",
@@ -78,4 +79,17 @@ class Interpreter:
 			except ValueError:
 				self.error.print_stacktrace("ConversionError", f"Could not convert '{self.variables[self.tokens['ARGS'][0]].literal}' (type '{self.types[self.variables[self.tokens['ARGS'][0]].__class__.__name__]}') to '{self.tokens['ARGS'][1]}'")
 		
+		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Round):
+			values = [str(self.variables[variable].literal) for variable in self.variables.keys()]
+			var_name = [var_name for var_name in self.variables.keys()][values.index(str(self.tokens["ARGS"][0].literal))]
+			
+			if self.tokens["ARGS"][1].literal == "floor":
+				return math.floor(self.tokens["ARGS"][0].literal)
+			elif self.tokens["ARGS"][1].literal == "ceil":
+				return math.ceil(self.tokens["ARGS"][0].literal)
+			elif self.tokens["ARGS"][1].literal == "nearest":
+				return round(self.tokens["ARGS"][0].literal)
+			else:
+				self.error.print_stacktrace("RoundError", f"Invalid round type '{self.tokens['ARGS'][1].literal}'")
+  
 		return self.variables
