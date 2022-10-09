@@ -15,14 +15,24 @@ class Interpreter:
 			if len(self.tokens["ARGS"]) > 1:
 				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 1):]
 				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
-				self.error.print_stacktrace("ArgError", f"Extra arguments {extra}")
+				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
 
 			print(self.tokens["ARGS"][0].literal)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
+			if len(self.tokens["ARGS"]) > 1:
+				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 1):]
+				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
+				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
+
 			return input(self.tokens["ARGS"][0].literal)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Variable):
+			if len(self.tokens["ARGS"]) > 2:
+				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 2):]
+				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
+				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
+			
 			try:
 				for returns in self.returns.keys():
 					if self.tokens["ARGS"][1][:len(returns)] == returns:
