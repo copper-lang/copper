@@ -1,6 +1,1 @@
 set(x, in("Enter a number: "))
-cast(x, float)
-out(x)
-
-set(x, round(x, "nearest"))
-out(x)

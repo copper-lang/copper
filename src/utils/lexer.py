@@ -6,11 +6,11 @@ class Lexer:
 		self.line = list(line)
 		if line[-1] == "\n":
 			self.line.pop()
-	
+
 		self.variables = variables
 		self.error = error
 		self.tokens = {}
-	
+
 		self.builtins = {
 			"out": Tokens.Procs.Builtins.Output(),
 			"in": Tokens.Procs.Builtins.Input(),
@@ -20,7 +20,8 @@ class Lexer:
 		}
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input(),
-			"round": Tokens.Procs.Builtins.Round()
+			"cast": Tokens.Procs.Builtins.Cast(),
+			# "round": Tokens.Procs.Builtins.Round()
 		}
 		self.types = [
 			"string",
@@ -28,37 +29,37 @@ class Lexer:
 			"float",
 			"bool"
 		]
-	
+
 	def lex(self) -> dict:
 		proc = ""
 		i = 0
 		while self.line[i] != "(":
 			proc += self.line[i]
 			i += 1
-	
+
 		for char in proc:
 			self.line.remove(char)
-	
+
 		try:
 			self.tokens["PROC"] = self.builtins[proc]
 		except KeyError:
 			self.error.print_stacktrace("ProcError", f"Unknown procedure '{proc}'")
-	
+
 		if self.line[0] == "(" and self.line[-1] == ")":
 			self.line = self.line[1:-1]
-	
+
 			commas = []
 			for i, char in enumerate("".join(self.line)):
 				if char == ",":
 					commas.append(i)
-	
+
 			args = "".join(self.line).split(",")
-	
+
 			try:
 				for i in range(len(args)):
 					if args[i].strip()[0] == "\"" and args[i].strip()[-1] == "\"":
 						pass
-	
+
 					elif ((args[i].strip()[0] == "\"" or args[i].strip()[0] + args[i].strip()[1] == "$\"") and args[i].strip()[-1] != "\"") and args[i+1].strip()[-1] == "\"":
 						arg = ""
 						while True:
@@ -66,26 +67,29 @@ class Lexer:
 								arg += args[i]
 								args.pop(i)
 								break
-	
+
 							else:
 								arg += args[i] + ","
 								args.pop(i)
-	
+
 						args.insert(i, arg)
-	
+
 			except IndexError:
 				pass
- 
+
 			self.tokens["ARGS"] = []
 			isVar = False
 			for arg in args:
+				if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types):
+					arg = arg[:-1]
+				
 				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
 					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
 				elif (arg.strip()[0] == "\"" and arg.strip()[-1] != "\"") or (arg.strip()[0] != "\"" and arg.strip()[-1] == "\""):
 					for returns in self.returns.keys():
 						if arg.strip()[:len(returns)] == returns:
 							self.error.print_stacktrace("SyntaxError", f"Missing parentheses in procedure call '{returns}'")
-     
+		
 					isProc = False
 					for returns in self.returns.keys():
 						if args[args.index(arg)-1].strip()[:len(returns)] == returns:
@@ -97,15 +101,13 @@ class Lexer:
 					if proc == "set" and isVar == False:
 						self.tokens["ARGS"].append(arg)
 						isVar = True
-					elif proc == "cast":
-						self.tokens["ARGS"] = [arg.strip() for arg in args]
 					else:
 						try:
-							integer = int(arg)
+							integer = int(arg.strip())
 							self.tokens["ARGS"].append(Tokens.Literals.Integer(integer))
 						except ValueError:
 							try:
-								decimal = float(arg)
+								decimal = float(arg.strip())
 								self.tokens["ARGS"].append(Tokens.Literals.Float(decimal))
 							except ValueError:
 								if arg.strip() == "True" or arg.strip() == "False":
@@ -126,7 +128,7 @@ class Lexer:
 													variables[variable] = self.variables[variable].literal
 												
 												eq = eval(arg.strip(), variables)
-	
+
 												if isinstance(eq, bool):
 													self.tokens["ARGS"].append(Tokens.Literals.Boolean(eq))
 												elif isinstance(eq, int):
@@ -134,51 +136,55 @@ class Lexer:
 												elif isinstance(eq, float):
 													self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
 												
-											except (SyntaxError, NameError):
+											except (SyntaxError, NameError, AttributeError):
 												if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
 													self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
 												else:
 													isProc = False
+													proc = ""
 													for returns in self.returns.keys():
 														if arg.strip()[:len(returns)] == returns:
 															isProc = True
-		
+															proc = arg.strip()[:len(returns)]
+
 													if isProc:
-														self.tokens["ARGS"].append(arg.strip())
+														i = args.index(arg)
+														_arg = list(arg.strip())
+														for char in proc:
+															_arg.remove(char)
+														args[i] = "".join(_arg)
+
 														self.tokens["LEXER"] = Lexer
+				
+														if len(args) == 2:
+															call = args[1].strip()
+															self.tokens["ARGS"].append(proc + call)
+				
+														else:
+															i = 1
+															_args = ""
+															while args[i][-1] != ")":
+																_args += args[i] + ","
+																i += 1
+															_args += args[i]
 
-														if len(self.tokens["ARGS"]) < len(args):
-															isProc = False
-															for returns in self.returns.keys():
-																if args[args.index(arg)].strip()[:len(returns)] == returns:
-																	isProc = True
-              
-															if isProc:
-																_args = []
-																i = args.index(arg)
-																while args[i][-1] != ")":
-																	_args.append(args[i])
-																	i += 1
-																_args.append(args[i])
-
-																self.tokens["ARGS"].pop() 
-																self.tokens["ARGS"].append((",".join(_args)).strip())
-              
+															self.tokens["ARGS"].append(proc + _args)
+			
 													else:
 														for builtin in self.builtins.keys():
 															if arg.strip()[:len(builtin)] == builtin:
 																self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
-														
+
 														self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
 
 			return self.tokens
-	
+
 		else:
 			self.error.print_stacktrace("SyntaxError", "Missing parentheses")
-	
+
 	def addVars(self, string):
 		for variable in self.variables.keys():
 			if f"%{variable}%" in string:
 				string = string.replace(f"%{variable}%", str(self.variables[variable].literal))
-	
+
 		return string[1:]
