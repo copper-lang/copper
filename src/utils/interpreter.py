@@ -26,7 +26,15 @@ class Interpreter:
 				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
 				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
 
-			print(self.tokens["ARGS"][0].literal)
+			string = self.tokens["ARGS"][0].literal
+			if (string[0] == "\"" or string[:2] == "$\"") and string[-1] == "\"":
+				for variable in self.variables.keys():
+					if f"%{variable}%" in string:
+						string = string.replace(f"%{variable}%", str(self.variables[variable].literal))
+
+				string = string[2:-1]
+    
+			print(string)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
 			if len(self.tokens["ARGS"]) > 1:

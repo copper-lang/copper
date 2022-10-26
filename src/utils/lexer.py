@@ -176,14 +176,7 @@ class Lexer:
 
 													self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
 
-			return self.tokens
-
 		else:
 			self.error.print_stacktrace("SyntaxError", "Missing parentheses")
-
-	def addVars(self, string):
-		for variable in self.variables.keys():
-			if f"%{variable}%" in string:
-				string = string.replace(f"%{variable}%", str(self.variables[variable].literal))
-
-		return string[1:]
+   
+		return self.tokens
