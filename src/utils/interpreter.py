@@ -33,7 +33,7 @@ class Interpreter:
 						string = string.replace(f"%{variable}%", str(self.variables[variable].literal))
 
 				string = string[2:-1]
-    
+
 			print(string)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
@@ -45,6 +45,11 @@ class Interpreter:
 			return Tokens.Literals.String(input(self.tokens["ARGS"][0].literal))
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Variable):
+			if len(self.tokens["ARGS"]) > 2:
+				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 2):]
+				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
+				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
+			
 			try:
 				for returns in self.returns.keys():
 					if self.tokens["ARGS"][1][:len(returns)] == returns:
@@ -62,6 +67,11 @@ class Interpreter:
 				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Cast):
+			if len(self.tokens["ARGS"]) > 2:
+				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 2):]
+				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
+				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
+      
 			var_name = list(self.variables.keys())[list(self.variables.values()).index(self.tokens["ARGS"][0])]
       
 			try:
