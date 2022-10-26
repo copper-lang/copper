@@ -1,4 +1,4 @@
-set(x, in("Enter a number: "), 1, 2)
+set(x, in("Enter a number: "))
 set(x, cast(x, int))
 
 set(y, in("Enter a number: "))
