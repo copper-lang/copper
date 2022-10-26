@@ -34,19 +34,21 @@ class Interpreter:
 				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
 				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
 
-			self.variables[self.tokens["ARGS"][0]] = input(self.tokens["ARGS"][0].literal)
+			return Tokens.Literals.String(input(self.tokens["ARGS"][0].literal))
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Variable):
 			try:
 				for returns in self.returns.keys():
 					if self.tokens["ARGS"][1][:len(returns)] == returns:
 						break
-  
+
 				lexer = self.tokens["LEXER"](self.tokens["ARGS"][1], self.variables, self.error)
 				tokens = lexer.lex()
     
 				interpreter = Interpreter(tokens, self.variables, self.error)
-				self.variables = interpreter.interpret()
+				returned = interpreter.interpret()
+
+				self.variables[self.tokens["ARGS"][0]] = returned
 
 			except TypeError:
 				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
@@ -54,16 +56,16 @@ class Interpreter:
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Cast):
 			try:
 				if self.tokens["ARGS"][1] == "string":
-					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.String(str(self.variables[self.tokens["ARGS"][0]].literal))
+					return Tokens.Literals.String(str(self.variables[self.tokens["ARGS"][0]].literal))
 
 				elif self.tokens["ARGS"][1] == "int":
-					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Integer(int(self.variables[self.tokens["ARGS"][0]].literal))
+					return Tokens.Literals.Integer(int(self.variables[self.tokens["ARGS"][0]].literal))
 				
 				elif self.tokens["ARGS"][1] == "float":
-					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Float(float(self.variables[self.tokens["ARGS"][0]].literal))
+					return Tokens.Literals.Float(float(self.variables[self.tokens["ARGS"][0]].literal))
 
 				elif self.tokens["ARGS"][1] == "bool":
-					self.variables[self.tokens["ARGS"][0]] = Tokens.Literals.Boolean(str(self.variables[self.tokens["ARGS"][0]].literal) == "True")
+					return Tokens.Literals.Boolean(str(self.variables[self.tokens["ARGS"][0]].literal) == "True")
 				
 				else:
 					self.error.print_stacktrace("ConversionTypeError", f"Invalid conversion type '{self.tokens['ARGS'][1]}'")

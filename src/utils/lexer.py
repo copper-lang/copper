@@ -81,10 +81,12 @@ class Lexer:
 			isVar = False
 			for arg in args:
 				if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types):
-					arg = arg[:-1]
+					arg = arg.strip()[:-1]
 				
 				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
 					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
+				elif (arg.strip()[0] == "\"" or arg.strip()[:2] == "$\"") and arg.strip()[-1] == "\"":
+					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()))
 				elif (arg.strip()[0] == "\"" and arg.strip()[-1] != "\"") or (arg.strip()[0] != "\"" and arg.strip()[-1] == "\""):
 					for returns in self.returns.keys():
 						if arg.strip()[:len(returns)] == returns:
@@ -99,7 +101,7 @@ class Lexer:
 						self.error.print_stacktrace("SyntaxError", f"Missing quotation marks in argument '{arg.strip()}'")
 				else:
 					if proc == "set" and isVar == False:
-						self.tokens["ARGS"].append(arg)
+						self.tokens["ARGS"].append(arg.strip())
 						isVar = True
 					else:
 						try:
@@ -137,45 +139,42 @@ class Lexer:
 													self.tokens["ARGS"].append(Tokens.Literals.Float(eq))
 												
 											except (SyntaxError, NameError, AttributeError):
-												if arg[0] == "$" and (arg[1] == "\"" and arg[-1] == "\""):
-													self.tokens["ARGS"].append(Tokens.Literals.String(self.addVars(arg[1:-1])))
-												else:
-													isProc = False
-													proc = ""
-													for returns in self.returns.keys():
-														if arg.strip()[:len(returns)] == returns:
-															isProc = True
-															proc = arg.strip()[:len(returns)]
+												isProc = False
+												proc = ""
+												for returns in self.returns.keys():
+													if arg.strip()[:len(returns)] == returns:
+														isProc = True
+														proc = arg.strip()[:len(returns)]
 
-													if isProc:
-														i = args.index(arg)
-														_arg = list(arg.strip())
-														for char in proc:
-															_arg.remove(char)
-														args[i] = "".join(_arg)
+												if isProc:
+													i = args.index(arg)
+													_arg = list(arg.strip())
+													for char in proc:
+														_arg.remove(char)
+													args[i] = "".join(_arg)
 
-														self.tokens["LEXER"] = Lexer
-				
-														if len(args) == 2:
-															call = args[1].strip()
-															self.tokens["ARGS"].append(proc + call)
-				
-														else:
-															i = 1
-															_args = ""
-															while args[i][-1] != ")":
-																_args += args[i] + ","
-																i += 1
-															_args += args[i]
-
-															self.tokens["ARGS"].append(proc + _args)
+													self.tokens["LEXER"] = Lexer
+			
+													if len(args) == 2:
+														call = args[1].strip()
+														self.tokens["ARGS"].append(proc + call)
 			
 													else:
-														for builtin in self.builtins.keys():
-															if arg.strip()[:len(builtin)] == builtin:
-																self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
+														i = 1
+														_args = ""
+														while args[i][-1] != ")":
+															_args += args[i] + ","
+															i += 1
+														_args += args[i]
 
-														self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
+														self.tokens["ARGS"].append(proc + _args)
+		
+												else:
+													for builtin in self.builtins.keys():
+														if arg.strip()[:len(builtin)] == builtin:
+															self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
+
+													self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
 
 			return self.tokens
 

@@ -1,1 +1,2 @@
-set(x, in("Enter a number: "))
+set(name, in("Enter your name: "))
+out($"Hello, %name%.")
