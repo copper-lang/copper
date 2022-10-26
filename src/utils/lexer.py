@@ -16,7 +16,7 @@ class Lexer:
 			"in": Tokens.Procs.Builtins.Input(),
 			"set": Tokens.Procs.Builtins.Variable(),
 			"cast": Tokens.Procs.Builtins.Cast(),
-			"round": Tokens.Procs.Builtins.Round()
+			# "round": Tokens.Procs.Builtins.Round()
 		}
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input(),
