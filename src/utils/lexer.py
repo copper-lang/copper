@@ -23,12 +23,12 @@ class Lexer:
 			"cast": Tokens.Procs.Builtins.Cast(),
 			# "round": Tokens.Procs.Builtins.Round()
 		}
-		self.types = [
-			"string",
-			"int",
-			"float",
-			"bool"
-		]
+		self.types = {
+			"str": "string",
+			"int": "int",
+			"float": "float",
+			"bool": "bool"
+		}
 
 	def lex(self) -> dict:
 		proc = ""
@@ -80,7 +80,7 @@ class Lexer:
 			self.tokens["ARGS"] = []
 			isVar = False
 			for arg in args:
-				if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types):
+				if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types.values()):
 					arg = arg.strip()[:-1]
 				
 				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
@@ -118,7 +118,7 @@ class Lexer:
 									if arg.strip() in self.variables.keys():
 										self.tokens["ARGS"].append(self.variables[arg.strip()])
 									else:
-										if arg.strip() in self.types:
+										if arg.strip() in self.types.values():
 											self.tokens["ARGS"].append(arg.strip())
 										else:
 											try:
@@ -175,6 +175,18 @@ class Lexer:
 															self.error.print_stacktrace("ProcError", f"Procedure '{builtin}' does not return a value")
 
 													self.error.print_stacktrace("LiteralError", f"Invalid literal '{arg.strip()}'")
+             
+											except TypeError as te:
+												error_types = str(te).split(":")[1]
+												error_types = error_types.split(" and ")
+												
+												for i in range(len(error_types)):
+													error_types[i] = error_types[i].strip()
+													error_types[i] = error_types[i].strip("'")
+
+												error_types = [self.types[error_type] for error_type in error_types]
+            
+												self.error.print_stacktrace("EvaluationError", f"Can't evaluate expression between types '{error_types[0]}' and '{error_types[1]}'")
 
 		else:
 			self.error.print_stacktrace("SyntaxError", "Missing parentheses")
