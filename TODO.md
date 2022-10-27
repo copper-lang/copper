@@ -12,5 +12,6 @@
     - [x] Math
     - [x] Boolean Expressions
 - [x] Type Casting (cast)
-- [ ] Type (getType)
-- [ ] Escape Characters
+- [x] Escape Characters
+	- [x] \n
+	- [x] \t

@@ -39,7 +39,7 @@ class Interpreter:
 
 				string = string[2:-1]
 
-			print(string)
+			print(string.replace("\\n", "\n").replace("\\t", "\t"))
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
 			if len(self.tokens["ARGS"]) > 1:
