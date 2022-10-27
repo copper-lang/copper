@@ -9,14 +9,19 @@ class Interpreter:
 
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input(),
-			"cast": Tokens.Procs.Builtins.Cast(),
-			# "round": Tokens.Procs.Builtins.Round()
+			"cast": Tokens.Procs.Builtins.Cast()
 		}
 		self.types = {
 			"String": "string",
 			"Integer": "int",
 			"Float": "float",
 			"Boolean": "bool"
+		}
+		self.arguments = {
+			"out": "'output'",
+			"in": "'prompt'",
+			"set": ["'variable name'", "'literal'"],
+			"cast": ["'variable name'", "'type'"],
 		}
 
 	def interpret(self) -> dict:
@@ -65,6 +70,9 @@ class Interpreter:
 
 			except TypeError:
 				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
+			except IndexError:
+				missing = self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):]
+				self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):])}")
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Cast):
 			if len(self.tokens["ARGS"]) > 2:
@@ -92,5 +100,8 @@ class Interpreter:
 
 			except ValueError:
 				self.error.print_stacktrace("ConversionError", f"Could not convert '{self.variables[var_name].literal}' (type '{self.types[self.variables[var_name].__class__.__name__]}') to '{self.tokens['ARGS'][1]}'")
+			except IndexError:
+				missing = self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):]
+				self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):])}")
 
 		return self.variables

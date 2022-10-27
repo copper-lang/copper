@@ -1,8 +1,0 @@
-set(x, in("Enter a number: "))
-set(x, cast(x, int))
-
-set(y, in("Enter a number: "))
-set(y, cast(y, int))
-
-set(z, x + y)
-out(z)

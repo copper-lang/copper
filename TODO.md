@@ -12,6 +12,5 @@
     - [x] Math
     - [x] Boolean Expressions
 - [x] Type Casting (cast)
-- [ ] Round
 - [ ] Type (getType)
 - [ ] Escape Characters

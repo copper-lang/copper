@@ -10,7 +10,6 @@ class Tokens:
 			class Input: pass
 			class Variable: pass
 			class Cast: pass
-			class Round: pass
 
 	class Literals:
 		class String(String):

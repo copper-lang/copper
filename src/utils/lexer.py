@@ -15,19 +15,23 @@ class Lexer:
 			"out": Tokens.Procs.Builtins.Output(),
 			"in": Tokens.Procs.Builtins.Input(),
 			"set": Tokens.Procs.Builtins.Variable(),
-			"cast": Tokens.Procs.Builtins.Cast(),
-			# "round": Tokens.Procs.Builtins.Round()
+			"cast": Tokens.Procs.Builtins.Cast()
 		}
 		self.returns = {
 			"in": Tokens.Procs.Builtins.Input(),
-			"cast": Tokens.Procs.Builtins.Cast(),
-			# "round": Tokens.Procs.Builtins.Round()
+			"cast": Tokens.Procs.Builtins.Cast()
 		}
 		self.types = {
 			"str": "string",
 			"int": "int",
 			"float": "float",
 			"bool": "bool"
+		}
+		self.arguments = {
+			"out": "'output'",
+			"in": "'prompt'",
+			"set": ["'variable name'", "'literal'"],
+			"cast": ["'variable name'", "'type'"],
 		}
 
 	def lex(self) -> dict:
@@ -80,8 +84,11 @@ class Lexer:
 			self.tokens["ARGS"] = []
 			isVar = False
 			for arg in args:
-				if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types.values()):
-					arg = arg.strip()[:-1]
+				try:
+					if arg[-1] == ")" and ((arg.strip()[0] == "\"" and arg.strip()[-2] == "\"") or arg.strip()[:-1] in self.types.values()):
+						arg = arg.strip()[:-1]
+				except IndexError:
+					self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments[proc][-(len(self.arguments[proc]) - len(self.tokens['ARGS'])):]) if isinstance(self.arguments[proc], list) else self.arguments[proc]}")
 				
 				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
 					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
@@ -147,6 +154,7 @@ class Lexer:
 														proc = arg.strip()[:len(returns)]
 
 												if isProc:
+													print(args)
 													i = args.index(arg)
 													_arg = list(arg.strip())
 													for char in proc:
@@ -155,10 +163,10 @@ class Lexer:
 
 													self.tokens["LEXER"] = Lexer
 			
-													if len(args) == 2:
+													if len(args) < 3 and len(args) > 0:
 														call = args[1].strip()
 														self.tokens["ARGS"].append(proc + call)
-			
+
 													else:
 														i = 1
 														_args = ""
