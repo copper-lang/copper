@@ -71,7 +71,6 @@ class Interpreter:
 			except TypeError:
 				self.variables[self.tokens["ARGS"][0]] = self.tokens["ARGS"][1]
 			except IndexError:
-				missing = self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):]
 				self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):])}")
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Cast):
@@ -101,7 +100,6 @@ class Interpreter:
 			except ValueError:
 				self.error.print_stacktrace("ConversionError", f"Could not convert '{self.variables[var_name].literal}' (type '{self.types[self.variables[var_name].__class__.__name__]}') to '{self.tokens['ARGS'][1]}'")
 			except IndexError:
-				missing = self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):]
-				self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments['set'][-(len(self.arguments['set']) - len(self.tokens['ARGS'])):])}")
+				self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments['cast'][-(len(self.arguments['cast']) - len(self.tokens['ARGS'])):])}")
 
 		return self.variables
