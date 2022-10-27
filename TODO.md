@@ -1,17 +1,10 @@
-- [x] Lexing System
-- [x] Interpreter System
-- [x] Output
-- [x] Input
-- [x] Variables
-	- [x] String
-	- [x] Integer (int)
-	- [x] Float
-	- [x] Boolean (bool)
-    - [x] Reference in Strings
-    - [x] Save input to a variable
-    - [x] Math
-    - [x] Boolean Expressions
-- [x] Type Casting (cast)
-- [x] Escape Characters
-	- [x] \n
-	- [x] \t
+- [ ] User-made Procedures
+	- [ ] Creation
+    - [ ] Calling
+    - [ ] Parameters
+- [ ] If-Else
+	- [ ] If	
+	- [ ] Else
+	- [ ] Elseif
+- [ ] While
+- [ ] For
