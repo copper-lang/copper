@@ -54,7 +54,6 @@ class Interpreter:
 
 			if len(self.tokens["ARGS"]) > 2:
 				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 2):]
-				print(self.tokens["ARGS"])
 				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
 				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
 
