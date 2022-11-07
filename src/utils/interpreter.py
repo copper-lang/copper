@@ -1,4 +1,3 @@
-import math
 from .tokens import Tokens
 
 class Interpreter:
@@ -39,7 +38,7 @@ class Interpreter:
 
 				string = string[2:-1]
 
-			print(string.replace("\\n", "\n").replace("\\t", "\t"))
+			print(string)
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Input):
 			if len(self.tokens["ARGS"]) > 1:
@@ -50,11 +49,15 @@ class Interpreter:
 			return Tokens.Literals.String(input(self.tokens["ARGS"][0].literal))
 
 		elif isinstance(self.tokens["PROC"], Tokens.Procs.Builtins.Variable):
+			if len(self.tokens["ARGS"]) > 2 and self.tokens["ARGS"][2] in self.types.values():
+				self.tokens["ARGS"].pop()
+
 			if len(self.tokens["ARGS"]) > 2:
 				extra = self.tokens["ARGS"][-(len(self.tokens["ARGS"]) - 2):]
+				print(self.tokens["ARGS"])
 				extra = ", ".join('\'' + str(arg.literal) + '\'' for arg in extra)
 				self.error.print_stacktrace("ArgError", f"Extra argument(s) {extra}")
-			
+
 			try:
 				for returns in self.returns.keys():
 					if self.tokens["ARGS"][1][:len(returns)] == returns:
