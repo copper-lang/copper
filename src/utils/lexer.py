@@ -37,12 +37,19 @@ class Lexer:
 	def lex(self) -> dict:
 		proc = ""
 		i = 0
-		while self.line[i] != "(":
-			proc += self.line[i]
-			i += 1
+  
+		try:
+			while self.line[i] != "(":
+				proc += self.line[i]
+				i += 1
+		
+		except IndexError:
+			self.error.print_stacktrace("SyntaxError", "Missing parentheses")
 
 		for char in proc:
 			self.line.remove(char)
+   
+		proc = proc.strip()
 
 		try:
 			self.tokens["PROC"] = self.builtins[proc]
@@ -91,9 +98,9 @@ class Lexer:
 					self.error.print_stacktrace("ArgError", f"Missing required argument(s) {', '.join(self.arguments[proc][-(len(self.arguments[proc]) - len(self.tokens['ARGS'])):]) if isinstance(self.arguments[proc], list) else self.arguments[proc]}")
 				
 				if arg.strip()[0] == "\"" and arg.strip()[-1] == "\"":
-					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1]))
+					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()[1:-1].replace("\\n", "\n").replace("\\t", "\t")))
 				elif (arg.strip()[0] == "\"" or arg.strip()[:2] == "$\"") and arg.strip()[-1] == "\"":
-					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip()))
+					self.tokens["ARGS"].append(Tokens.Literals.String(arg.strip().replace("\\n", "\n").replace("\\t", "\t")))
 				elif (arg.strip()[0] == "\"" and arg.strip()[-1] != "\"") or (arg.strip()[0] != "\"" and arg.strip()[-1] == "\""):
 					for returns in self.returns.keys():
 						if arg.strip()[:len(returns)] == returns:
@@ -138,7 +145,9 @@ class Lexer:
 												
 												eq = eval(arg.strip(), variables)
 
-												if isinstance(eq, bool):
+												if isinstance(eq, str):
+													self.tokens["ARGS"].append(Tokens.Literals.String(eq))
+												elif isinstance(eq, bool):
 													self.tokens["ARGS"].append(Tokens.Literals.Boolean(eq))
 												elif isinstance(eq, int):
 													self.tokens["ARGS"].append(Tokens.Literals.Integer(eq))
@@ -154,7 +163,6 @@ class Lexer:
 														proc = arg.strip()[:len(returns)]
 
 												if isProc:
-													print(args)
 													i = args.index(arg)
 													_arg = list(arg.strip())
 													for char in proc:
