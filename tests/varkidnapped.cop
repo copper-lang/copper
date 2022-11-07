@@ -1,0 +1,98 @@
+// This is a recreation of a C++ project called Var-Kidnapped.
+// See the original here: https://github.com/aidenpike/schoolprojects/blob/main/Var-Kidnapped/main.cpp
+
+// Scenario One
+set(length, in("Enter length: "))
+set(length, cast(length, int))
+
+set(width, in("Enter width: "))
+set(width, cast(width, int))
+
+set(perimeter, length*2 + width*2)
+set(area, length*width)
+
+out($"\nPerimeter: %perimeter%\nArea: %area%")
+
+out("\n=======================================================\n")
+
+// Scenario Two
+set(capacity, in("Enter the number of gallons the car can hold: "))
+set(capacity, cast(capacity, int))
+
+set(mpg, in("Enter the MPG (Miles Per Gallon) the car has: "))
+set(mpg, cast(mpg, int))
+
+set(distance, capacity*mpg)
+
+out($"\nDistance the car can drive without refilling: %distance% miles")
+
+out("\n=======================================================\n")
+
+// Scenario Three
+set(pay, in("Enter your daily pay: "))
+set(pay, cast(pay, float))
+
+set(hours, in("Enter the number of hours you've worked: "))
+set(hours, cast(hours, int))
+
+set(hourly_pay, pay/hours)
+
+out($"\nYour hourly pay is: $%hourly_pay%")
+
+out("\n=======================================================\n")
+
+// Scenario Four
+set(cpg, in("Enter the CPG (Cost Per Gallon) of gas: "))
+set(cpg, cast(cpg, float))
+
+set(gallons, in("Enter the number of gallons you need: "))
+set(gallons, cast(gallons, int))
+
+set(cost, cpg*gallons)
+
+out($"\nTotal Cost to Buy Gas: $%cost%")
+
+out("\n=======================================================\n")
+
+// Scenario Five
+set(hours, in("Enter number of hours: "))
+set(hours, cast(hours, int))
+
+set(minutes, in("Enter number of minutes: "))
+set(minutes, cast(minutes, int))
+
+set(seconds, in("Enter number of seconds: "))
+set(seconds, cast(seconds, int))
+
+set(seconds, hours*3600 + minutes*60 + seconds)
+
+out($"\nTotal Seconds: %seconds%")
+
+out("\n=======================================================\n")
+
+// Scenario Six
+set(amount, in("Enter number of action figures: "))
+set(amount, cast(amount, int))
+
+set(crates, (amount-(amount % 20)) / 20)
+set(crates, cast(crates, int))
+set(leftover, amount % 20)
+
+out($"\nCrates needed: %crates%")
+out($"Number of leftover figures: %leftover%")
+
+out("\n=======================================================\n")
+
+// Scenario Seven
+set(seconds, in("Enter number of seconds: "))
+set(seconds, cast(seconds, int))
+
+set(hours, (seconds-(seconds % 3600)) / 3600)
+set(hours, cast(hours, int))
+set(seconds, seconds-(hours*3600))
+
+set(minutes, (seconds-(seconds % 60)) / 60)
+set(minutes, cast(minutes, int))
+set(seconds, seconds-(minutes*60))
+
+out($"\nHours: %hours%\nMinutes: %minutes%\nSeconds: %seconds%")
