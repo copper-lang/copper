@@ -1,18 +1,10 @@
-- [x] Functions
-  - [x] Parameters
-  - [ ] Return
-
-- [ ] If-Else Statements
-  - [x] If
-  - [ ] Else
-  - [ ] Elseif
-
-- [ ] Lists
-	- [x] Declaration
-    - [ ] Usage
-        - [ ] Whole List
-        - [ ] Inidividual Elements
-
-- [ ] While Loop
-- [ ] For Loop
-- [ ] Escape Characters
+- [ ] User-made Procedures
+	- [ ] Creation
+    - [ ] Calling
+    - [ ] Parameters
+- [ ] If-Else
+	- [ ] If	
+	- [ ] Else
+	- [ ] Elseif
+- [ ] While
+- [ ] For
